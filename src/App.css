@@ -1,0 +1,124 @@
+.container {
+  font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+.flex {
+  flex: 1;
+}
+
+.editor {
+  flex: 3;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.files {
+  flex: 1;
+  overflow-y: auto;
+  background: #444;
+  color: white;
+  padding: 8px 0;
+  overflow-x: hidden;
+  max-width: 25vw;
+}
+
+.file {
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: background-color 0.25s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.file:hover {
+  background-color: #888;
+}
+
+.selected {
+  background-color: #929292;
+}
+
+.dropzone {
+  cursor: pointer;
+  background: #4795ff;
+  color: white;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: background-color 0.25s;
+  text-align: center;
+}
+
+.dropzone:hover {
+  background: #3f7fdc;
+}
+
+.dropzone:focus {
+  outline: none;
+}
+
+.download {
+  cursor: pointer;
+  background: #00bb00;
+  color: white;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.download:hover {
+  background: #36b536;
+}
+
+.error {
+  background: red;
+  color: white;
+}
+
+.message {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monaco {
+  flex: 1;
+}
+
+.filename {
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.reset {
+  border: none;
+  background: none;
+  cursor: pointer;
+}

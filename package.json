@@ -1,0 +1,128 @@
+{
+  "name": "zipadee",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "now-dev": "webpack-dev-server",
+    "now-build": "webpack --mode=production"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "file-saver": "^2.0.2",
+    "jszip": "^3.2.2",
+    "monaco-editor": "^0.17.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-dropzone": "^10.1.5",
+    "workbox-webpack-plugin": "^4.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/classnames": "^2.2.9",
+    "@types/file-saver": "^2.0.1",
+    "@types/jest": "24.0.15",
+    "@types/jszip": "^3.1.6",
+    "@types/node": "12.6.4",
+    "@types/react": "16.8.23",
+    "@types/react-dom": "16.8.4",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "html-webpack-plugin": "^3.2.0",
+    "monaco-editor-webpack-plugin": "^1.7.0",
+    "prettier": "^1.18.2",
+    "style-loader": "^0.23.1",
+    "typescript": "3.5.3",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "babel": {
+    "presets": [
+      "@babel/env",
+      "@babel/react",
+      "@babel/typescript"
+    ]
+  },
+  "browserslist": [
+    "last 2 years"
+  ],
+  "prettier": {
+    "printWidth": 80,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true
+    },
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "prettier",
+      "react",
+      "react-hooks"
+    ],
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended",
+      "plugin:react/recommended",
+      "plugin:promise/recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    ],
+    "rules": {
+      "@typescript-eslint/explicit-function-return-type": 0,
+      "promise/always-return": 0,
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn"
+    },
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [
+            ".js",
+            ".jsx",
+            ".ts",
+            ".tsx"
+          ]
+        }
+      },
+      "react": {
+        "version": "16.8"
+      }
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.js"
+        ],
+        "rules": {
+          "@typescript-eslint/no-var-requires": 0
+        }
+      }
+    ]
+  }
+}
