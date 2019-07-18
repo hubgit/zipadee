@@ -24,12 +24,12 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  background: #444;
 }
 
 .files {
   flex: 1;
   overflow-y: auto;
-  background: #444;
   color: white;
   padding: 8px 0;
   overflow-x: hidden;
@@ -59,9 +59,12 @@
   background: #4795ff;
   color: white;
   padding: 16px;
-  box-sizing: border-box;
   transition: background-color 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  line-height: 1;
 }
 
 .dropzone:hover {
@@ -70,6 +73,12 @@
 
 .dropzone:focus {
   outline: none;
+}
+
+.fullscreen .dropzone {
+  height: 100vh;
+  width: 100vw;
+  font-size: 400%;
 }
 
 .download {
@@ -102,6 +111,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
 }
 
 .monaco {
@@ -121,4 +131,8 @@
   border: none;
   background: none;
   cursor: pointer;
+}
+
+.select-message {
+  padding: 32px;
 }

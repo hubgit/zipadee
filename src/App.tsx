@@ -21,6 +21,7 @@ export const App: React.FC = () => {
   const [files, setFiles] = useState<string[]>()
   const [selectedFilename, setSelectedFilename] = useState<string>()
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
+  const [changed, setChanged] = useState(false)
 
   // reset
   const handleReset = useCallback(() => {
@@ -29,6 +30,7 @@ export const App: React.FC = () => {
     setZip(undefined)
     setFiles(undefined)
     setSelectedFilename(undefined)
+    setChanged(false)
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -76,7 +78,7 @@ export const App: React.FC = () => {
           if (file.name.endsWith('.zip')) {
             setError(error.message)
           } else {
-            setError(`This is not a ZIP file?`)
+            setError(`This is not a ZIP file 😖`)
           }
         })
   }, [file])
@@ -174,6 +176,7 @@ export const App: React.FC = () => {
     if (editor && zip && selectedFilename) {
       disposable = editor.onDidChangeModelContent(() => {
         zip.file(selectedFilename, editor.getValue())
+        setChanged(true)
       })
     }
 
@@ -186,18 +189,22 @@ export const App: React.FC = () => {
 
   return (
     <div className={'container'}>
-      <div className={'flex sidebar'}>
+      <div
+        className={classnames({
+          flex: true,
+          fullscreen: !file,
+          sidebar: true,
+        })}
+      >
         <div className={'dropzone'} {...getRootProps()}>
           <input {...getInputProps()} />
 
-          {isDragActive
-            ? 'Drop a file here…'
-            : 'Click to select a ZIP file for editing'}
+          {isDragActive ? 'Drop a file here…' : 'Click to select a ZIP file'}
         </div>
 
-        <div className={'files'}>
-          {files &&
-            files.map(file => (
+        {files && (
+          <div className={'files'}>
+            {files.map(file => (
               <div
                 className={classnames({
                   file: true,
@@ -210,9 +217,10 @@ export const App: React.FC = () => {
                 {file}
               </div>
             ))}
-        </div>
+          </div>
+        )}
 
-        {zip && file && (
+        {changed && (
           <div className={'download'} onClick={downloadZip}>
             Download updated ZIP file
           </div>
@@ -222,11 +230,15 @@ export const App: React.FC = () => {
       <div className={'flex editor'}>
         {error && <div className={'error message'}>{error}</div>}
 
-        {selectedFilename && (
-          <div className={'filename'}>
+        <div className={'filename'}>
+          {selectedFilename && (
             <span onClick={downloadSelectedFile}>{selectedFilename}</span>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/*{zip && !selectedFilename && (
+          <div className={'select-message'}>&larr; Choose a file to edit</div>
+        )}*/}
 
         <div className={'monaco'} ref={editorRef} />
       </div>
