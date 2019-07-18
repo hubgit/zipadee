@@ -154,14 +154,6 @@ export const App: React.FC = () => {
 
             existingEditor.setModel(model)
 
-            existingEditor.changeViewZones(accessor => {
-              accessor.addZone({
-                afterLineNumber: 0,
-                heightInPx: 16,
-                domNode: document.createElement('div'),
-              })
-            })
-
             existingEditor.focus()
           })
           .catch(error => {
