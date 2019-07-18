@@ -2725,6 +2725,11 @@ fast-levenshtein@~2.0.4:
   resolved "https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-plist@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/fast-plist/-/fast-plist-0.1.2.tgz#a45aff345196006d406ca6cdcd05f69051ef35b8"
+  integrity sha1-pFr/NFGWAG1AbKbNzQX2kFHvNbg=
+
 faye-websocket@^0.10.0:
   version "0.10.0"
   resolved "https://registry.npmjs.org/faye-websocket/-/faye-websocket-0.10.0.tgz#4e492f8d04dfb6f89003507f6edbf2d501e7c6f4"
@@ -4137,6 +4142,13 @@ monaco-editor@^0.17.1:
   version "0.17.1"
   resolved "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.17.1.tgz#8fbe96ca54bfa75262706e044f8f780e904aa45c"
   integrity sha512-JAc0mtW7NeO+0SwPRcdkfDbWLgkqL9WfP1NbpP9wNASsW6oWqgZqNIWt4teymGjZIXTElx3dnQmUYHmVrJ7HxA==
+
+monaco-themes@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.npmjs.org/monaco-themes/-/monaco-themes-0.3.3.tgz#86d9b7cde4d90acb128ec07b3d5d10f757a32224"
+  integrity sha512-0yygYHg3hZhMhlYkP2eMAMurLSyVDqA7ZOjHJSz0LNxra2hxuAGjKFdoBGXnG+VykT6u8bc5uZWF8G35NMC3Gw==
+  dependencies:
+    fast-plist "^0.1.2"
 
 move-concurrently@^1.0.1:
   version "1.0.1"

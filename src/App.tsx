@@ -120,10 +120,6 @@ export const App: React.FC = () => {
           .file(filename)
           .async('text')
           .then(async code => {
-            const monacoEditor = await import(
-              // eslint-disable-next-line import/no-unresolved
-              /* webpackPrefetch: true */ 'monaco-editor'
-            )
             let existingEditor = editor
 
             if (!existingEditor) {
@@ -131,8 +127,16 @@ export const App: React.FC = () => {
                 throw new Error('Editor node not mounted')
               }
 
+              const theme = await import('monaco-themes/themes/GitHub.json')
+
+              monaco.editor.defineTheme(
+                'github',
+                theme as monaco.editor.IStandaloneThemeData
+              )
+
               const editor = monaco.editor.create(editorRef.current, {
                 wordWrap: 'on',
+                theme: 'github',
               })
 
               setEditor(editor)
@@ -145,6 +149,11 @@ export const App: React.FC = () => {
             if (prevModel) {
               prevModel.dispose()
             }
+
+            const monacoEditor = await import(
+              // eslint-disable-next-line import/no-unresolved
+              /* webpackPrefetch: true */ 'monaco-editor'
+            )
 
             const model = monacoEditor.editor.createModel(
               code,
