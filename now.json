@@ -24,7 +24,7 @@
       "headers": { "cache-control": "s-maxage=0" },
       "dest": "/service-worker.js"
     },
-    { "src": "/(.*).(.*)", "dest": "/$1.$2" },
+    { "src": "/(.*)\\.(.*)", "dest": "/$1.$2" },
     { "src": "/sockjs-node/(.*)", "dest": "/sockjs-node/$1" },
     {
       "src": "/(.*)",
