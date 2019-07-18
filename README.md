@@ -1,6 +1,6 @@
 ## Development
 
-Run `now dev` to start `webpack-dev-server` at http://localhost:8080
+Run `now dev` to start serving the app at http://localhost:3000
 
 ## Deployment
 
