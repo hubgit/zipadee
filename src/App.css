@@ -18,6 +18,7 @@
   background: #4795ff;
   color: #fff;
   z-index: 2;
+  border-bottom: 1px solid #2c61a9;
 }
 
 .main {
@@ -62,11 +63,11 @@
 }
 
 .file:hover {
-  background-color: #999;
+  background-color: #3168b380;
 }
 
 .file.selected {
-  background-color: #777;
+  background-color: #3168b3;
 }
 
 .dropzone {
@@ -80,13 +81,13 @@
   align-items: center;
   text-align: center;
   font-size: 400%;
-  text-shadow: 0 1px 1px black;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  text-shadow: 0 1px 1px #444;
 }
 
 .dropzone:focus {
@@ -131,7 +132,7 @@
 }
 
 .filename {
-  background-color: #3775ca;
+  background: #4795ff;
   color: white;
   padding: 16px;
   cursor: pointer;
@@ -149,13 +150,10 @@
 }
 
 .zipfile {
-  background-color: #3168b3;
-  padding: 16px;
+  padding: 8px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  line-height: 1;
+  text-shadow: 0 1px 1px #444;
 }
 
 .reset {
@@ -184,6 +182,12 @@
   padding: 8px 0;
 }
 
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .install {
   border: none;
   background: none;
@@ -204,4 +208,8 @@
 
 .install:focus {
   outline: none;
+}
+
+.fullscreen .header {
+  border-bottom: none;
 }

@@ -224,23 +224,31 @@ export const App: React.FC = () => {
   }, [installPrompt])
 
   return (
-    <div
+    <nav
       className={classnames({
         container: true,
         fullscreen: !file,
       })}
     >
-      <div className={'header'}>
-        <button onClick={handleReset} className={'reset'}>
-          <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
-        </button>
+      <nav className={'header'}>
+        <div className={'header-section'}>
+          <button onClick={handleReset} className={'reset'}>
+            <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
+          </button>
+
+          {file && (
+            <div className={'zipfile'}>
+              <span>{file.name}</span>
+            </div>
+          )}
+        </div>
 
         {file && installPrompt && (
           <button className={'install'} onClick={showInstallPrompt}>
             Install
           </button>
         )}
-      </div>
+      </nav>
 
       {!file && (
         <div className={'dropzone'} {...getRootProps()}>
@@ -259,12 +267,6 @@ export const App: React.FC = () => {
             sidebar: true,
           })}
         >
-          {file && (
-            <div className={'zipfile'}>
-              <span>{file.name}</span>
-            </div>
-          )}
-
           {files && (
             <Files
               files={files}
@@ -292,6 +294,6 @@ export const App: React.FC = () => {
           <div className={'monaco'} ref={editorRef} />
         </div>
       </div>
-    </div>
+    </nav>
   )
 }
