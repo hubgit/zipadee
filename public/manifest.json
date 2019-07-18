@@ -1,0 +1,18 @@
+{
+  "short_name": "Zipadee",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4795ff",
+  "icons": [
+    {
+      "src": "/zip-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/zip-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

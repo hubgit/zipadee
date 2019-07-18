@@ -18,14 +18,13 @@
       "headers": { "cache-control": "s-maxage=31536000,immutable" },
       "dest": "/js/$1"
     },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/manifest.json", "dest": "/manifest.json" },
     { "src": "/precache-manifest.(.*)", "dest": "/precache-manifest.$1" },
     {
       "src": "/service-worker.js",
       "headers": { "cache-control": "s-maxage=0" },
       "dest": "/service-worker.js"
     },
+    { "src": "/(.*).(.*)", "dest": "/$1.$2" },
     { "src": "/sockjs-node/(.*)", "dest": "/sockjs-node/$1" },
     {
       "src": "/(.*)",

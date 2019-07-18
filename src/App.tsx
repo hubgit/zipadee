@@ -7,6 +7,15 @@ import { useDropzone } from 'react-dropzone'
 import './App.css'
 import { Files } from './Files'
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed'
+    platform: string
+  }>
+
+  prompt(): Promise<void>
+}
+
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
     return 'json'
@@ -23,6 +32,7 @@ export const App: React.FC = () => {
   const [selectedFilename, setSelectedFilename] = useState<string>()
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
   const [changed, setChanged] = useState(false)
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent>()
 
   // reset
   const handleReset = useCallback(() => {
@@ -195,6 +205,32 @@ export const App: React.FC = () => {
     }
   }, [editor, zip, selectedFilename])
 
+  useEffect(() => {
+    const listener = (event: Event) => {
+      setInstallPrompt(() => event as BeforeInstallPromptEvent)
+    }
+
+    window.addEventListener('beforeinstallprompt', listener)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', listener)
+    }
+  }, [])
+
+  const showInstallPrompt = useCallback(() => {
+    if (installPrompt) {
+      installPrompt.prompt()
+
+      installPrompt.userChoice
+        .then(choiceResult => {
+          console.log(`Install ${choiceResult}`)
+        })
+        .catch(error => {
+          setError(error.message)
+        })
+    }
+  }, [installPrompt])
+
   return (
     <div
       className={classnames({
@@ -206,13 +242,21 @@ export const App: React.FC = () => {
         <button onClick={handleReset} className={'reset'}>
           <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
         </button>
+
+        {file && installPrompt && (
+          <button className={'install'} onClick={showInstallPrompt}>
+            Install
+          </button>
+        )}
       </div>
 
       {!file && (
         <div className={'dropzone'} {...getRootProps()}>
           <input {...getInputProps()} />
 
-          {isDragActive ? 'Drop a file here…' : 'Click to select a ZIP file'}
+          {isDragActive
+            ? 'Drop a ZIP file here…'
+            : 'Click to select a ZIP file'}
         </div>
       )}
 

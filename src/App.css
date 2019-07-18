@@ -16,6 +16,7 @@
   align-items: center;
   padding: 0 8px;
   background: #4795ff;
+  color: #fff;
   z-index: 2;
 }
 
@@ -181,4 +182,26 @@
   width: 64px;
   height: 64px;
   padding: 8px 0;
+}
+
+.install {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  text-transform: uppercase;
+  font-size: inherit;
+  transition: background-color 0.25s;
+}
+
+.install:hover {
+  background-color: #3775ca;
+}
+
+.install:focus {
+  outline: none;
 }
