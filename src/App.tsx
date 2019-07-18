@@ -5,6 +5,7 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import './App.css'
+import { Files } from './Files'
 
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
@@ -36,8 +37,6 @@ export const App: React.FC = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     onDrop: acceptedFiles => {
-      handleReset()
-
       if (editor) {
         const prevModel = editor.getModel()
 
@@ -188,59 +187,65 @@ export const App: React.FC = () => {
   }, [editor, zip, selectedFilename])
 
   return (
-    <div className={'container'}>
-      <div
-        className={classnames({
-          flex: true,
-          fullscreen: !file,
-          sidebar: true,
-        })}
-      >
+    <div
+      className={classnames({
+        container: true,
+        fullscreen: !file,
+      })}
+    >
+      <div className={'header'}>
+        <button onClick={handleReset} className={'reset'}>
+          <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
+        </button>
+      </div>
+
+      {!file && (
         <div className={'dropzone'} {...getRootProps()}>
           <input {...getInputProps()} />
 
           {isDragActive ? 'Drop a file here…' : 'Click to select a ZIP file'}
         </div>
+      )}
 
-        {files && (
-          <div className={'files'}>
-            {files.map(file => (
-              <div
-                className={classnames({
-                  file: true,
-                  selected: selectedFilename === file,
-                })}
-                key={file}
-                onClick={() => selectFile(file)}
-                title={file}
-              >
-                {file}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className={'main'}>
+        <div
+          className={classnames({
+            flex: true,
+            sidebar: true,
+          })}
+        >
+          {file && (
+            <div className={'zipfile'}>
+              <span>{file.name}</span>
+            </div>
+          )}
 
-        {changed && (
-          <div className={'download'} onClick={downloadZip}>
-            Download updated ZIP file
-          </div>
-        )}
-      </div>
+          {files && (
+            <Files
+              files={files}
+              selectedFilename={selectedFilename}
+              selectFile={selectFile}
+            />
+          )}
 
-      <div className={'flex editor'}>
-        {error && <div className={'error message'}>{error}</div>}
-
-        <div className={'filename'}>
-          {selectedFilename && (
-            <span onClick={downloadSelectedFile}>{selectedFilename}</span>
+          {changed && (
+            <div className={'download'} onClick={downloadZip}>
+              Download updated ZIP file
+            </div>
           )}
         </div>
 
-        {/*{zip && !selectedFilename && (
-          <div className={'select-message'}>&larr; Choose a file to edit</div>
-        )}*/}
+        <div className={'flex editor'}>
+          {error && <div className={'error message'}>{error}</div>}
 
-        <div className={'monaco'} ref={editorRef} />
+          {selectedFilename && (
+            <div className={'filename'}>
+              <span onClick={downloadSelectedFile}>{selectedFilename}</span>
+            </div>
+          )}
+
+          <div className={'monaco'} ref={editorRef} />
+        </div>
       </div>
     </div>
   )
