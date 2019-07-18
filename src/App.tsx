@@ -6,6 +6,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import './App.css'
 
+const chooseLanguage = (filename: string) => {
+  if (filename.endsWith('-json')) {
+    return 'json'
+  }
+
+  return undefined
+}
+
 export const App: React.FC = () => {
   const [error, setError] = useState<string>()
   const [file, setFile] = useState<File>()
@@ -129,7 +137,7 @@ export const App: React.FC = () => {
 
             const model = monacoEditor.editor.createModel(
               code,
-              undefined,
+              chooseLanguage(filename),
               monacoEditor.Uri.file(filename)
             )
 
