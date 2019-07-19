@@ -213,3 +213,12 @@
 .fullscreen .header {
   border-bottom: none;
 }
+
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+  margin: 0 16px;
+}

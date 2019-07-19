@@ -1,6 +1,6 @@
 ## Development
 
-Run `now dev` to start serving the app at http://localhost:3000
+Run `now dev` to start serving the app.
 
 ## Deployment
 
