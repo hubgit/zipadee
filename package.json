@@ -2,6 +2,7 @@
   "name": "zipadee",
   "version": "0.1.0",
   "private": true,
+  "repository": "hubgit/zipadee",
   "scripts": {
     "now-dev": "webpack-dev-server --port $PORT",
     "now-build": "webpack --mode=production"
