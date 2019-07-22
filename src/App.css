@@ -80,14 +80,13 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-size: 400%;
+  font-size: 200%;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-  text-shadow: 0 1px 1px #444;
 }
 
 .dropzone:focus {
@@ -188,28 +187,6 @@
   justify-content: center;
 }
 
-.install {
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: inherit;
-  text-transform: uppercase;
-  font-size: inherit;
-  transition: background-color 0.25s;
-}
-
-.install:hover {
-  background-color: #3775ca;
-}
-
-.install:focus {
-  outline: none;
-}
-
 .fullscreen .header {
   border-bottom: none;
 }
@@ -221,4 +198,51 @@
   text-decoration: none;
   color: inherit;
   margin: 0 16px;
+}
+
+.button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  font-size: inherit;
+  transition: background-color 0.25s;
+  background: #273e7c77;
+  text-transform: uppercase;
+}
+
+.button:hover {
+  background: #273e7c
+}
+
+.button:focus {
+  outline: none;
+}
+
+.install {
+  background: #273e7c00;
+}
+
+.install:hover {
+  background: #273e7c77;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 1px 1px #444;
+}
+
+.intro .button {
+  margin: 32px 0;
+}
+
+.extensions {
+  font-size: 50%;
 }

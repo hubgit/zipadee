@@ -256,7 +256,7 @@ export const App: React.FC = () => {
         {file && (
           <div className={'header-section'}>
             {installPrompt && (
-              <button className={'install'} onClick={showInstallPrompt}>
+              <button className={'button install'} onClick={showInstallPrompt}>
                 Install
               </button>
             )}
@@ -270,9 +270,15 @@ export const App: React.FC = () => {
         <div className={'dropzone'} {...getRootProps()}>
           <input {...getInputProps()} />
 
-          {isDragActive
-            ? 'Drop a ZIP file here…'
-            : 'Click to select a ZIP file'}
+          {isDragActive ? (
+            'Drop a ZIP file here…'
+          ) : (
+            <div className={'intro'}>
+              <div>View or edit the contents of a ZIP file</div>
+              <div className={'extensions'}>(EPUB, DOCX, XLSX, PPTX, ODT)</div>
+              <button className={'button choose'}>Choose a file</button>
+            </div>
+          )}
         </div>
       )}
 
