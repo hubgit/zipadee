@@ -255,6 +255,12 @@ export const App: React.FC = () => {
 
         {file && (
           <div className={'header-section'}>
+            {changed && (
+              <div className={'button download'} onClick={downloadZip}>
+                Save updated ZIP
+              </div>
+            )}
+
             {installPrompt && (
               <button className={'button install'} onClick={showInstallPrompt}>
                 Install
@@ -275,7 +281,9 @@ export const App: React.FC = () => {
           ) : (
             <div className={'intro'}>
               <div>View or edit the contents of a ZIP file</div>
-              <div className={'extensions'}>(EPUB, DOCX, XLSX, PPTX, ODT)</div>
+              <div className={'extensions'}>
+                (including EPUB, DOCX, XLSX, PPTX, ODT)
+              </div>
               <button className={'button choose'}>Choose a file</button>
             </div>
           )}
@@ -295,12 +303,6 @@ export const App: React.FC = () => {
               selectedFilename={selectedFilename}
               selectFile={selectFile}
             />
-          )}
-
-          {changed && (
-            <div className={'download'} onClick={downloadZip}>
-              Download updated ZIP file
-            </div>
           )}
         </div>
 

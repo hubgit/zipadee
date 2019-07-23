@@ -223,6 +223,16 @@
   outline: none;
 }
 
+.download {
+  background: #16d41c;
+  border: 1px solid transparent;
+}
+
+.download:hover {
+  background: #16d41c;
+  border-color: white;
+}
+
 .install {
   background: #273e7c00;
 }
@@ -245,4 +255,9 @@
 
 .extensions {
   font-size: 50%;
+}
+
+.choose {
+  font-size: 22px;
+  border: 1px solid #bdd4ff;
 }
