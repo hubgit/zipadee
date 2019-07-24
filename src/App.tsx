@@ -32,6 +32,7 @@ const decoder = new TextDecoder('utf-8')
 export const App: React.FC = () => {
   const [error, setError] = useState<string>()
   const [file, setFile] = useState<File>()
+  const [filename, setFilename] = useState<string>()
   const [zip, setZip] = useState<JSZip>()
   const [files, setFiles] = useState<string[]>()
   const [selectedFilename, setSelectedFilename] = useState<string>()
@@ -45,6 +46,7 @@ export const App: React.FC = () => {
   const handleReset = useCallback(() => {
     setError(undefined)
     setFile(undefined)
+    setFilename(undefined)
     setZip(undefined)
     setFiles(undefined)
     setSelectedFilename(undefined)
@@ -64,7 +66,9 @@ export const App: React.FC = () => {
       }
 
       if (acceptedFiles.length) {
-        setFile(acceptedFiles[0])
+        const file = acceptedFiles[0]
+        setFile(file)
+        setFilename(file.name)
       } else {
         setError('This file type is not acceptable')
       }
@@ -102,30 +106,30 @@ export const App: React.FC = () => {
 
   // download the updated zip
   const downloadZip = useCallback(() => {
-    if (zip && file) {
+    if (zip && filename) {
       zip
         .generateAsync({
           type: 'blob',
         })
         .then(blob => {
-          saveAs(blob, file.name)
+          saveAs(blob, filename)
         })
         .catch(error => {
           setError(error.message)
         })
     }
-  }, [zip, file])
+  }, [zip, filename])
 
   const editorRef = useRef<HTMLDivElement>(null)
 
   // open the selected file in the editor
   const selectFile = useCallback(
-    (filename: string) => {
+    (selectedFilename: string) => {
       if (zip) {
-        setSelectedFilename(filename)
+        setSelectedFilename(selectedFilename)
 
         zip
-          .file(filename)
+          .file(selectedFilename)
           .async('arraybuffer')
           .then(async code => {
             let existingEditor = editor
@@ -168,8 +172,8 @@ export const App: React.FC = () => {
 
             const model = monacoEditor.editor.createModel(
               decoder.decode(code),
-              chooseLanguage(filename),
-              monacoEditor.Uri.file(filename)
+              chooseLanguage(selectedFilename),
+              monacoEditor.Uri.file(selectedFilename)
             )
 
             existingEditor.setModel(model)
@@ -280,6 +284,25 @@ export const App: React.FC = () => {
     }
   }, [installPrompt])
 
+  const filenameRef = useRef<HTMLInputElement>(null)
+
+  // handle edits to the file name
+  const handleFilenameChange = useCallback(event => {
+    setFilename(event.target.value)
+    setChanged(true)
+  }, [])
+
+  const handleFilenameSubmit = useCallback(
+    (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+
+      if (filenameRef.current) {
+        filenameRef.current.blur()
+      }
+    },
+    [filenameRef]
+  )
+
   return (
     <nav
       className={classnames({
@@ -298,17 +321,30 @@ export const App: React.FC = () => {
             <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
           </button>
 
-          {file && (
-            <div className={'zipfile'}>
-              <span>{file.name}</span>
-            </div>
+          {filename && (
+            <form className={'filename-form'} onSubmit={handleFilenameSubmit}>
+              <input
+                ref={filenameRef}
+                onChange={handleFilenameChange}
+                className={'filename-input'}
+                value={filename}
+                size={filename.length}
+                aria-label={'Edit the ZIP file name'}
+                data-balloon-pos={'right'}
+              />
+            </form>
           )}
         </div>
 
-        {file && (
+        {filename && (
           <div className={'header-section'}>
             {changed && (
-              <div className={'button download'} onClick={downloadZip}>
+              <div
+                className={'button download'}
+                onClick={downloadZip}
+                aria-label={`Download ${filename}`}
+                data-balloon-pos={'left'}
+              >
                 Save updated ZIP
               </div>
             )}
