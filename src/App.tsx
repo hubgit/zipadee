@@ -76,35 +76,6 @@ export const App: React.FC = () => {
     },
   })
 
-  // read file list from the zip
-  useEffect(() => {
-    if (file)
-      import(/* webpackPrefetch: true */ 'jszip')
-        .then(JSZip => JSZip.loadAsync(file))
-        .then(zip => {
-          setZip(zip)
-
-          const files: string[] = []
-
-          for (const zipEntry of Object.values(zip.files)) {
-            if (!zipEntry.dir) {
-              files.push(zipEntry.name)
-            }
-          }
-
-          files.sort()
-
-          setFiles(files)
-        })
-        .catch(error => {
-          if (file.name.endsWith('.zip')) {
-            setError(error.message)
-          } else {
-            setError(`This is not a ZIP file 😖`)
-          }
-        })
-  }, [file])
-
   // download the updated zip
   const downloadZip = useCallback(() => {
     if (zip && filename) {
@@ -124,80 +95,113 @@ export const App: React.FC = () => {
 
   const editorRef = useRef<HTMLDivElement>(null)
 
-  // open the selected file in the editor
-  const selectFile = useCallback(
-    (selectedFilename: string) => {
-      if (zip) {
-        setSelectedFilename(selectedFilename)
+  // select a file
+  const selectFile = useCallback((selectedFilename: string) => {
+    setSelectedFilename(selectedFilename)
+  }, [])
 
-        zip
-          .file(selectedFilename)
-          .async('arraybuffer')
-          .then(async code => {
-            let existingEditor = editor
+  // read file list from the zip
+  useEffect(() => {
+    if (file)
+      import(/* webpackPrefetch: true */ 'jszip')
+        .then(JSZip => JSZip.loadAsync(file))
+        .then(zip => {
+          setZip(zip)
 
-            if (!existingEditor) {
-              if (!editorRef.current) {
-                throw new Error('Editor node not mounted')
-              }
+          const files: string[] = []
 
-              const theme = await import(
-                /* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json'
-              )
-
-              monaco.editor.defineTheme(
-                'github',
-                theme as monaco.editor.IStandaloneThemeData
-              )
-
-              const editor = monaco.editor.create(editorRef.current, {
-                wordWrap: 'on',
-                theme: 'github',
-                // automaticLayout: true,
-              })
-
-              setEditor(editor)
-
-              existingEditor = editor
+          for (const zipEntry of Object.values(zip.files)) {
+            if (!zipEntry.dir) {
+              files.push(zipEntry.name)
             }
+          }
 
-            const prevModel = existingEditor.getModel()
+          files.sort()
 
-            if (prevModel) {
-              prevModel.dispose()
-            }
+          setFiles(files)
 
-            const monacoEditor = await import(
-              // eslint-disable-next-line import/no-unresolved
-              /* webpackPrefetch: true */ 'monaco-editor'
-            )
-
-            const model = monacoEditor.editor.createModel(
-              decoder.decode(code),
-              chooseLanguage(selectedFilename),
-              monacoEditor.Uri.file(selectedFilename)
-            )
-
-            existingEditor.setModel(model)
-
-            existingEditor.focus()
-
-            const result = fileType(code)
-
-            const previewURL =
-              result && result.mime.startsWith('image/')
-                ? URL.createObjectURL(new Blob([code], { type: result.mime }))
-                : undefined
-
-            setPreviewURL(previewURL)
-          })
-          .catch(error => {
+          if (files.length) {
+            selectFile(files[0])
+          }
+        })
+        .catch(error => {
+          if (file.name.endsWith('.zip')) {
             setError(error.message)
-          })
-      }
-    },
-    [zip, editor]
-  )
+          } else {
+            setError(`This is not a ZIP file 😖`)
+          }
+        })
+  }, [file, selectFile])
+
+  // open the selected file in the editor
+  useEffect(() => {
+    if (zip && selectedFilename) {
+      zip
+        .file(selectedFilename)
+        .async('arraybuffer')
+        .then(async code => {
+          let existingEditor = editor
+
+          if (!existingEditor) {
+            if (!editorRef.current) {
+              throw new Error('Editor node not mounted')
+            }
+
+            const theme = await import(
+              /* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json'
+            )
+
+            monaco.editor.defineTheme(
+              'github',
+              theme as monaco.editor.IStandaloneThemeData
+            )
+
+            const editor = monaco.editor.create(editorRef.current, {
+              wordWrap: 'on',
+              theme: 'github',
+              // automaticLayout: true,
+            })
+
+            setEditor(editor)
+
+            existingEditor = editor
+          }
+
+          const prevModel = existingEditor.getModel()
+
+          if (prevModel) {
+            prevModel.dispose()
+          }
+
+          const monacoEditor = await import(
+            // eslint-disable-next-line import/no-unresolved
+            /* webpackPrefetch: true */ 'monaco-editor'
+          )
+
+          const model = monacoEditor.editor.createModel(
+            decoder.decode(code),
+            chooseLanguage(selectedFilename),
+            monacoEditor.Uri.file(selectedFilename)
+          )
+
+          existingEditor.setModel(model)
+
+          existingEditor.focus()
+
+          const result = fileType(code)
+
+          const previewURL =
+            result && result.mime.startsWith('image/')
+              ? URL.createObjectURL(new Blob([code], { type: result.mime }))
+              : undefined
+
+          setPreviewURL(previewURL)
+        })
+        .catch(error => {
+          setError(error.message)
+        })
+    }
+  }, [zip, editor, selectedFilename])
 
   // redo the editor layout when the container size changes
   const editorContainerMounted = useCallback(
@@ -292,6 +296,7 @@ export const App: React.FC = () => {
     setChanged(true)
   }, [])
 
+  // handle submission of the file name form
   const handleFilenameSubmit = useCallback(
     (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault()
