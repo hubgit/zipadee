@@ -113,6 +113,7 @@ export const App: React.FC = () => {
         })
         .then(blob => {
           saveAs(blob, filename)
+          setChanged(false)
         })
         .catch(error => {
           setError(error.message)
