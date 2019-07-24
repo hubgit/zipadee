@@ -26,14 +26,9 @@
   flex: 1;
 }
 
-.flex {
-  flex: 1;
-}
-
 .editor {
-  flex: 3;
+  flex: 1;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -53,13 +48,14 @@
 
 .file {
   cursor: pointer;
-  padding: 12px 16px;
+  padding: 8px 16px;
   transition: background-color 0.25s;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 0;
   max-width: 25vw;
+  font-size: 90%;
 }
 
 .file:hover {
@@ -93,26 +89,6 @@
   outline: none;
 }
 
-.download {
-  cursor: pointer;
-  background: #00bb00;
-  color: white;
-  padding: 16px;
-  box-sizing: border-box;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-shrink: 0;
-}
-
-.download:hover {
-  background: #36b536;
-}
-
 .error {
   background: red;
   color: white;
@@ -128,6 +104,10 @@
 
 .monaco {
   flex: 1;
+}
+
+.monaco.hidden {
+  display: none;
 }
 
 .filename {
@@ -210,13 +190,22 @@
   justify-content: center;
   color: inherit;
   font-size: inherit;
-  transition: background-color 0.25s;
+  transition: background-color 0.25s, transform 0.25s;
   background: #273e7c77;
   text-transform: uppercase;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 .button:hover {
   background: #273e7c
+}
+
+.button:active {
+  transform: translateY(2px);
 }
 
 .button:focus {
@@ -224,13 +213,12 @@
 }
 
 .download {
-  background: #16d41c;
-  border: 1px solid transparent;
+  background: #36b536;
+  border: 1px solid white;
 }
 
 .download:hover {
   background: #16d41c;
-  border-color: white;
 }
 
 .install {
@@ -260,4 +248,18 @@
 .choose {
   font-size: 22px;
   border: 1px solid #bdd4ff;
+}
+
+.preview {
+  display: flex;
+  flex: 1;
+  background-color: #4795ff;
+  background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.preview-image {
+  max-width: 100%;
+  margin: auto;
 }

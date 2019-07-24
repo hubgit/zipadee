@@ -7,6 +7,7 @@ import { useDropzone } from 'react-dropzone'
 import './App.css'
 import { Files } from './Files'
 import { GitHubLink } from './GitHubLink'
+import fileType from 'file-type'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -25,6 +26,8 @@ const chooseLanguage = (filename: string) => {
   return undefined
 }
 
+const decoder = new TextDecoder('utf-8')
+
 export const App: React.FC = () => {
   const [error, setError] = useState<string>()
   const [file, setFile] = useState<File>()
@@ -34,6 +37,8 @@ export const App: React.FC = () => {
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
   const [changed, setChanged] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent>()
+  const [previewURL, setPreviewURL] = useState<string>()
+  const [observer, setObserver] = useState<ResizeObserver>()
 
   // reset
   const handleReset = useCallback(() => {
@@ -43,6 +48,7 @@ export const App: React.FC = () => {
     setFiles(undefined)
     setSelectedFilename(undefined)
     setChanged(false)
+    setPreviewURL(undefined)
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -119,7 +125,7 @@ export const App: React.FC = () => {
 
         zip
           .file(filename)
-          .async('text')
+          .async('arraybuffer')
           .then(async code => {
             let existingEditor = editor
 
@@ -128,7 +134,9 @@ export const App: React.FC = () => {
                 throw new Error('Editor node not mounted')
               }
 
-              const theme = await import('monaco-themes/themes/GitHub.json')
+              const theme = await import(
+                /* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json'
+              )
 
               monaco.editor.defineTheme(
                 'github',
@@ -138,6 +146,7 @@ export const App: React.FC = () => {
               const editor = monaco.editor.create(editorRef.current, {
                 wordWrap: 'on',
                 theme: 'github',
+                // automaticLayout: true,
               })
 
               setEditor(editor)
@@ -157,7 +166,7 @@ export const App: React.FC = () => {
             )
 
             const model = monacoEditor.editor.createModel(
-              code,
+              decoder.decode(code),
               chooseLanguage(filename),
               monacoEditor.Uri.file(filename)
             )
@@ -165,6 +174,17 @@ export const App: React.FC = () => {
             existingEditor.setModel(model)
 
             existingEditor.focus()
+
+            const result = fileType(code)
+
+            console.log(result)
+
+            const previewURL =
+              result && result.mime.startsWith('image/')
+                ? URL.createObjectURL(new Blob([code], { type: result.mime }))
+                : undefined
+
+            setPreviewURL(previewURL)
           })
           .catch(error => {
             setError(error.message)
@@ -172,6 +192,30 @@ export const App: React.FC = () => {
       }
     },
     [zip, editor]
+  )
+
+  // redo the editor layout when the container size changes
+  const editorContainerMounted = useCallback(
+    node => {
+      if (node && editor && !observer) {
+        const observer = new window.ResizeObserver(entries => {
+          for (const entry of entries) {
+            if (node.isSameNode(entry.target)) {
+              const {
+                contentRect: { width, height },
+              } = entry
+
+              editor.layout({ width, height })
+            }
+          }
+        })
+
+        observer.observe(node)
+
+        setObserver(observer)
+      }
+    },
+    [editor, observer]
   )
 
   // download an individual file
@@ -207,6 +251,7 @@ export const App: React.FC = () => {
     }
   }, [editor, zip, selectedFilename])
 
+  // prompt the user to install the app when appropriate
   useEffect(() => {
     const listener = (event: Event) => {
       setInstallPrompt(() => event as BeforeInstallPromptEvent)
@@ -219,6 +264,7 @@ export const App: React.FC = () => {
     }
   }, [])
 
+  // show the install prompt when the install button is clicked
   const showInstallPrompt = useCallback(() => {
     if (installPrompt) {
       installPrompt.prompt()
@@ -291,12 +337,7 @@ export const App: React.FC = () => {
       )}
 
       <div className={'main'}>
-        <div
-          className={classnames({
-            flex: true,
-            sidebar: true,
-          })}
-        >
+        <div className={'sidebar'}>
           {files && (
             <Files
               files={files}
@@ -306,7 +347,7 @@ export const App: React.FC = () => {
           )}
         </div>
 
-        <div className={'flex editor'}>
+        <div className={'editor'} ref={editorContainerMounted}>
           {error && <div className={'error message'}>{error}</div>}
 
           {selectedFilename && (
@@ -315,7 +356,20 @@ export const App: React.FC = () => {
             </div>
           )}
 
-          <div className={'monaco'} ref={editorRef} />
+          {previewURL && (
+            <div className={'preview'}>
+              <img
+                src={previewURL}
+                className={'preview-image'}
+                alt={'image preview'}
+              />
+            </div>
+          )}
+
+          <div
+            className={classnames({ monaco: true, hidden: previewURL })}
+            ref={editorRef}
+          />
         </div>
       </div>
     </nav>

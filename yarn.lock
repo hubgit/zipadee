@@ -2775,6 +2775,11 @@ file-selector@^0.1.11:
   dependencies:
     tslib "^1.9.0"
 
+file-type@^12.0.1:
+  version "12.0.1"
+  resolved "https://registry.npmjs.org/file-type/-/file-type-12.0.1.tgz#50c6a15025511e3f29e88a796103f80db0bfce7b"
+  integrity sha512-YIs1E51cmqcmgF38ODjy0+M/l5DyfIIy3vngTOujQr/lXqkaSskfBniaZoZ1HVIpa5FTf5e7hCXS4TzxfNGMRQ==
+
 fill-range@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/fill-range/-/fill-range-4.0.0.tgz#d544811d428f98eb06a63dc402d2403c328c38f7"
