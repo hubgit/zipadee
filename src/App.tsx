@@ -1,15 +1,15 @@
+import 'balloon-css'
 import classnames from 'classnames'
 import { saveAs } from 'file-saver'
+import fileType from 'file-type'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import 'balloon-css'
+import ResizeObserver from 'resize-observer-polyfill'
 import './App.css'
 import { Files } from './Files'
 import { GitHubLink } from './GitHubLink'
-import fileType from 'file-type'
-import ResizeObserver from 'resize-observer-polyfill'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -31,28 +31,30 @@ const chooseLanguage = (filename: string) => {
 const decoder = new TextDecoder('utf-8')
 
 export const App: React.FC = () => {
+  const [code, setCode] = useState<ArrayBuffer>()
+  const [changed, setChanged] = useState(false)
+  const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
   const [error, setError] = useState<string>()
   const [file, setFile] = useState<File>()
   const [filename, setFilename] = useState<string>()
-  const [zip, setZip] = useState<JSZip>()
   const [files, setFiles] = useState<string[]>()
-  const [selectedFilename, setSelectedFilename] = useState<string>()
-  const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
-  const [changed, setChanged] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent>()
-  const [previewURL, setPreviewURL] = useState<string>()
   const [observer, setObserver] = useState<ResizeObserver>()
+  const [previewURL, setPreviewURL] = useState<string>()
+  const [selectedFilename, setSelectedFilename] = useState<string>()
+  const [zip, setZip] = useState<JSZip>()
 
   // reset
   const handleReset = useCallback(() => {
+    setChanged(false)
+    setCode(undefined)
     setError(undefined)
     setFile(undefined)
     setFilename(undefined)
-    setZip(undefined)
     setFiles(undefined)
-    setSelectedFilename(undefined)
-    setChanged(false)
     setPreviewURL(undefined)
+    setSelectedFilename(undefined)
+    setZip(undefined)
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -93,7 +95,34 @@ export const App: React.FC = () => {
     }
   }, [zip, filename])
 
-  const editorRef = useRef<HTMLDivElement>(null)
+  // create the editor when the container node is mounted
+  const editorRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      import(/* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json')
+        .then(async theme => {
+          const monaco = await import(
+            // eslint-disable-next-line import/no-unresolved
+            /* webpackPrefetch: true */ 'monaco-editor'
+          )
+
+          monaco.editor.defineTheme(
+            'github',
+            theme as monaco.editor.IStandaloneThemeData
+          )
+
+          const editor = monaco.editor.create(node, {
+            wordWrap: 'on',
+            theme: 'github',
+            // automaticLayout: true,
+          })
+
+          setEditor(editor)
+        })
+        .catch(error => {
+          setError(error.message)
+        })
+    }
+  }, [])
 
   // select a file
   const selectFile = useCallback((selectedFilename: string) => {
@@ -135,73 +164,55 @@ export const App: React.FC = () => {
 
   // open the selected file in the editor
   useEffect(() => {
-    if (zip && selectedFilename) {
+    if (zip && editor && selectedFilename) {
       zip
         .file(selectedFilename)
         .async('arraybuffer')
         .then(async code => {
-          let existingEditor = editor
-
-          if (!existingEditor) {
-            if (!editorRef.current) {
-              throw new Error('Editor node not mounted')
-            }
-
-            const theme = await import(
-              /* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json'
-            )
-
-            monaco.editor.defineTheme(
-              'github',
-              theme as monaco.editor.IStandaloneThemeData
-            )
-
-            const editor = monaco.editor.create(editorRef.current, {
-              wordWrap: 'on',
-              theme: 'github',
-              // automaticLayout: true,
-            })
-
-            setEditor(editor)
-
-            existingEditor = editor
-          }
-
-          const prevModel = existingEditor.getModel()
+          const prevModel = editor.getModel()
 
           if (prevModel) {
             prevModel.dispose()
           }
 
-          const monacoEditor = await import(
+          const monaco = await import(
             // eslint-disable-next-line import/no-unresolved
             /* webpackPrefetch: true */ 'monaco-editor'
           )
 
-          const model = monacoEditor.editor.createModel(
-            decoder.decode(code),
-            chooseLanguage(selectedFilename),
-            monacoEditor.Uri.file(selectedFilename)
-          )
+          if (selectedFilename) {
+            const model = monaco.editor.createModel(
+              decoder.decode(code),
+              chooseLanguage(selectedFilename),
+              monaco.Uri.file(selectedFilename)
+            )
 
-          existingEditor.setModel(model)
+            editor.setModel(model)
+          }
 
-          existingEditor.focus()
+          editor.focus()
 
-          const result = fileType(code)
-
-          const previewURL =
-            result && result.mime.startsWith('image/')
-              ? URL.createObjectURL(new Blob([code], { type: result.mime }))
-              : undefined
-
-          setPreviewURL(previewURL)
+          setCode(code)
         })
         .catch(error => {
           setError(error.message)
         })
     }
   }, [zip, editor, selectedFilename])
+
+  // generate a preview URL for images
+  useEffect(() => {
+    if (code) {
+      const result = fileType(code)
+
+      const previewURL =
+        result && result.mime.startsWith('image/')
+          ? URL.createObjectURL(new Blob([code], { type: result.mime }))
+          : undefined
+
+      setPreviewURL(previewURL)
+    }
+  }, [code])
 
   // redo the editor layout when the container size changes
   const editorContainerMounted = useCallback(
@@ -327,15 +338,18 @@ export const App: React.FC = () => {
           </button>
 
           {filename && (
-            <form className={'filename-form'} onSubmit={handleFilenameSubmit}>
+            <form
+              className={'filename-form'}
+              onSubmit={handleFilenameSubmit}
+              aria-label={'Edit the ZIP file name'}
+              data-balloon-pos={'right'}
+            >
               <input
                 ref={filenameRef}
                 onChange={handleFilenameChange}
                 className={'filename-input'}
                 value={filename}
                 size={filename.length}
-                aria-label={'Edit the ZIP file name'}
-                data-balloon-pos={'right'}
               />
             </form>
           )}
@@ -350,7 +364,7 @@ export const App: React.FC = () => {
                 aria-label={`Download ${filename}`}
                 data-balloon-pos={'left'}
               >
-                Save updated ZIP
+                Save updated file
               </div>
             )}
 
