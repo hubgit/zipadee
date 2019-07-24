@@ -9,6 +9,7 @@ import './App.css'
 import { Files } from './Files'
 import { GitHubLink } from './GitHubLink'
 import fileType from 'file-type'
+import ResizeObserver from 'resize-observer-polyfill'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -183,8 +184,6 @@ export const App: React.FC = () => {
 
             const result = fileType(code)
 
-            console.log(result)
-
             const previewURL =
               result && result.mime.startsWith('image/')
                 ? URL.createObjectURL(new Blob([code], { type: result.mime }))
@@ -204,7 +203,7 @@ export const App: React.FC = () => {
   const editorContainerMounted = useCallback(
     node => {
       if (node && editor && !observer) {
-        const observer = new window.ResizeObserver(entries => {
+        const observer = new ResizeObserver(entries => {
           for (const entry of entries) {
             if (node.isSameNode(entry.target)) {
               const {
