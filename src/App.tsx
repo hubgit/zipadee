@@ -351,12 +351,7 @@ export const App: React.FC = () => {
             )}
 
             {installPrompt && (
-              <button
-                className={'button install'}
-                onClick={showInstallPrompt}
-                aria-label={'Install Zipadee for use offline'}
-                data-balloon-pos={'left'}
-              >
+              <button className={'button install'} onClick={showInstallPrompt}>
                 Install
               </button>
             )}
