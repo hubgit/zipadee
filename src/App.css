@@ -191,6 +191,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 0;
+  margin: 0 4px;
 }
 
 .button:hover {
