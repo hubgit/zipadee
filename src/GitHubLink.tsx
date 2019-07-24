@@ -6,6 +6,8 @@ export const GitHubLink: React.FC<{ repo: string }> = ({ repo }) => (
     href={`https://github.com/${repo}/`}
     target={'_blank'}
     rel={'noopener noreferrer'}
+    aria-label={'View source on GitHub'}
+    data-balloon-pos={'left'}
   >
     <svg
       width={24}

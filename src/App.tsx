@@ -4,6 +4,7 @@ import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import 'balloon-css'
 import './App.css'
 import { Files } from './Files'
 import { GitHubLink } from './GitHubLink'
@@ -288,7 +289,12 @@ export const App: React.FC = () => {
     >
       <nav className={'header'}>
         <div className={'header-section'}>
-          <button onClick={handleReset} className={'reset'}>
+          <button
+            onClick={handleReset}
+            className={'reset'}
+            aria-label={file ? 'Choose a new file' : undefined}
+            data-balloon-pos={'right'}
+          >
             <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
           </button>
 
@@ -308,7 +314,12 @@ export const App: React.FC = () => {
             )}
 
             {installPrompt && (
-              <button className={'button install'} onClick={showInstallPrompt}>
+              <button
+                className={'button install'}
+                onClick={showInstallPrompt}
+                aria-label={'Install Zipadee for use offline'}
+                data-balloon-pos={'left'}
+              >
                 Install
               </button>
             )}
@@ -352,7 +363,13 @@ export const App: React.FC = () => {
 
           {selectedFilename && (
             <div className={'filename'}>
-              <span onClick={downloadSelectedFile}>{selectedFilename}</span>
+              <span
+                onClick={downloadSelectedFile}
+                aria-label={'Download this file'}
+                data-balloon-pos={'right'}
+              >
+                {selectedFilename}
+              </span>
             </div>
           )}
 
