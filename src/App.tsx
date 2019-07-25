@@ -33,6 +33,7 @@ export const App: React.FC = () => {
   const [observer, setObserver] = useState<ResizeObserver>()
   const [previewURL, setPreviewURL] = useState<string>()
   const [selectedFilename, setSelectedFilename] = useState<string>()
+  const [showPreview, setShowPreview] = useState(true)
   const [zip, setZip] = useState<JSZip>()
 
   // reset
@@ -224,6 +225,11 @@ export const App: React.FC = () => {
     }
   }, [editor, zip, selectedFilename])
 
+  // toggle the image preview
+  const togglePreview = useCallback(() => {
+    setShowPreview(value => !value)
+  }, [])
+
   return (
     <nav
       className={classnames({
@@ -274,10 +280,19 @@ export const App: React.FC = () => {
               >
                 {selectedFilename}
               </span>
+
+              {previewURL && (
+                <button
+                  className={'button toggle-preview'}
+                  onClick={togglePreview}
+                >
+                  {showPreview ? 'Hide Preview' : 'Show Preview'}
+                </button>
+              )}
             </div>
           )}
 
-          {previewURL && (
+          {previewURL && showPreview && (
             <div className={'preview'}>
               <img
                 src={previewURL}
@@ -288,7 +303,10 @@ export const App: React.FC = () => {
           )}
 
           <div
-            className={classnames({ monaco: true, hidden: previewURL })}
+            className={classnames({
+              monaco: true,
+              hidden: previewURL && showPreview,
+            })}
             ref={editorRef}
           />
         </div>

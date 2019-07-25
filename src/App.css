@@ -114,13 +114,14 @@
 .filename {
   background: #4795ff;
   color: white;
-  padding: 16px;
+  padding: 4px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
   line-height: 1;
+  min-height: 32px;
 }
 
 .reset {
@@ -222,6 +223,10 @@
 
 .install:hover {
   background: #273e7c77;
+}
+
+.toggle-preview {
+  font-size: 90%;
 }
 
 .intro {
