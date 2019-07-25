@@ -282,4 +282,5 @@
 .gutter {
   flex-shrink: 0;
   cursor: col-resize;
+  background: #4795ff;
 }
