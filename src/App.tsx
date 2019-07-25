@@ -4,22 +4,13 @@ import { saveAs } from 'file-saver'
 import fileType from 'file-type'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import React, { useCallback, useEffect, useState } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import './App.css'
+import { Dropzone } from './Dropzone'
 import { Files } from './Files'
-import { GitHubLink } from './GitHubLink'
 import Split from 'react-split'
-
-interface BeforeInstallPromptEvent extends Event {
-  readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed'
-    platform: string
-  }>
-
-  prompt(): Promise<void>
-}
+import { Nav } from './Nav'
 
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
@@ -39,7 +30,6 @@ export const App: React.FC = () => {
   const [file, setFile] = useState<File>()
   const [filename, setFilename] = useState<string>()
   const [files, setFiles] = useState<string[]>()
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent>()
   const [observer, setObserver] = useState<ResizeObserver>()
   const [previewURL, setPreviewURL] = useState<string>()
   const [selectedFilename, setSelectedFilename] = useState<string>()
@@ -57,44 +47,6 @@ export const App: React.FC = () => {
     setSelectedFilename(undefined)
     setZip(undefined)
   }, [])
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    multiple: false,
-    onDrop: acceptedFiles => {
-      if (editor) {
-        const prevModel = editor.getModel()
-
-        if (prevModel) {
-          prevModel.dispose()
-        }
-      }
-
-      if (acceptedFiles.length) {
-        const file = acceptedFiles[0]
-        setFile(file)
-        setFilename(file.name)
-      } else {
-        setError('This file type is not acceptable')
-      }
-    },
-  })
-
-  // download the updated zip
-  const downloadZip = useCallback(() => {
-    if (zip && filename) {
-      zip
-        .generateAsync({
-          type: 'blob',
-        })
-        .then(blob => {
-          saveAs(blob, filename)
-          setChanged(false)
-        })
-        .catch(error => {
-          setError(error.message)
-        })
-    }
-  }, [zip, filename])
 
   // create the editor when the container node is mounted
   const editorRef = useCallback((node: HTMLDivElement | null) => {
@@ -272,54 +224,6 @@ export const App: React.FC = () => {
     }
   }, [editor, zip, selectedFilename])
 
-  // prompt the user to install the app when appropriate
-  useEffect(() => {
-    const listener = (event: Event) => {
-      setInstallPrompt(() => event as BeforeInstallPromptEvent)
-    }
-
-    window.addEventListener('beforeinstallprompt', listener)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', listener)
-    }
-  }, [])
-
-  // show the install prompt when the install button is clicked
-  const showInstallPrompt = useCallback(() => {
-    if (installPrompt) {
-      installPrompt.prompt()
-
-      installPrompt.userChoice
-        .then(choiceResult => {
-          console.log(`Install ${choiceResult}`)
-        })
-        .catch(error => {
-          setError(error.message)
-        })
-    }
-  }, [installPrompt])
-
-  const filenameRef = useRef<HTMLInputElement>(null)
-
-  // handle edits to the file name
-  const handleFilenameChange = useCallback(event => {
-    setFilename(event.target.value)
-    setChanged(true)
-  }, [])
-
-  // handle submission of the file name form
-  const handleFilenameSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault()
-
-      if (filenameRef.current) {
-        filenameRef.current.blur()
-      }
-    },
-    [filenameRef]
-  )
-
   return (
     <nav
       className={classnames({
@@ -327,75 +231,24 @@ export const App: React.FC = () => {
         fullscreen: !file,
       })}
     >
-      <nav className={'header'}>
-        <div className={'header-section'}>
-          <button
-            onClick={handleReset}
-            className={'reset'}
-            aria-label={file ? 'Choose a new file' : undefined}
-            data-balloon-pos={'right'}
-          >
-            <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
-          </button>
-
-          {filename && (
-            <form
-              className={'filename-form'}
-              onSubmit={handleFilenameSubmit}
-              aria-label={'Edit the ZIP file name'}
-              data-balloon-pos={'right'}
-            >
-              <input
-                ref={filenameRef}
-                onChange={handleFilenameChange}
-                className={'filename-input'}
-                value={filename}
-                size={filename.length}
-              />
-            </form>
-          )}
-        </div>
-
-        {filename && (
-          <div className={'header-section'}>
-            {changed && (
-              <div
-                className={'button download'}
-                onClick={downloadZip}
-                aria-label={`Download ${filename}`}
-                data-balloon-pos={'left'}
-              >
-                Save updated file
-              </div>
-            )}
-
-            {installPrompt && (
-              <button className={'button install'} onClick={showInstallPrompt}>
-                Install
-              </button>
-            )}
-
-            <GitHubLink repo={'hubgit/zipadee'} />
-          </div>
-        )}
-      </nav>
+      <Nav
+        changed={changed}
+        file={file}
+        filename={filename}
+        handleReset={handleReset}
+        setChanged={setChanged}
+        setError={setError}
+        setFilename={setFilename}
+        zip={zip}
+      />
 
       {!file && (
-        <div className={'dropzone'} {...getRootProps()}>
-          <input {...getInputProps()} />
-
-          {isDragActive ? (
-            'Drop a ZIP file here…'
-          ) : (
-            <div className={'intro'}>
-              <div>View or edit the contents of a ZIP file</div>
-              <div className={'extensions'}>
-                (including EPUB, DOCX, XLSX, PPTX, ODT)
-              </div>
-              <button className={'button choose'}>Choose a file</button>
-            </div>
-          )}
-        </div>
+        <Dropzone
+          editor={editor}
+          setError={setError}
+          setFile={setFile}
+          setFilename={setFilename}
+        />
       )}
 
       <Split className={'main'} gutterSize={4}>

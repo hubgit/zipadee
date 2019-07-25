@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const GitHubLink: React.FC<{ repo: string }> = ({ repo }) => (
+export const GitHubLink: React.FC<{ repo: string }> = React.memo(({ repo }) => (
   <a
     className={'github-link'}
     href={`https://github.com/${repo}/`}
@@ -23,4 +23,4 @@ export const GitHubLink: React.FC<{ repo: string }> = ({ repo }) => (
       />
     </svg>
   </a>
-)
+))
