@@ -23,7 +23,6 @@ const chooseLanguage = (filename: string) => {
 const decoder = new TextDecoder('utf-8')
 
 export const App: React.FC = () => {
-  const [code, setCode] = useState<ArrayBuffer>()
   const [changed, setChanged] = useState(false)
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
   const [error, setError] = useState<string>()
@@ -39,7 +38,6 @@ export const App: React.FC = () => {
   // reset
   const handleReset = useCallback(() => {
     setChanged(false)
-    setCode(undefined)
     setError(undefined)
     setFile(undefined)
     setFilename(undefined)
@@ -119,54 +117,43 @@ export const App: React.FC = () => {
   // open the selected file in the editor
   useEffect(() => {
     if (zip && editor && selectedFilename) {
+      const language = chooseLanguage(selectedFilename)
+      const uri = monaco.Uri.file(selectedFilename)
+
+      const prevModel = editor.getModel()
+
+      if (prevModel) {
+        prevModel.dispose()
+      }
+
       zip
         .file(selectedFilename)
         .async('arraybuffer')
-        .then(async code => {
-          const prevModel = editor.getModel()
+        .then(async buffer => {
+          const result = fileType(buffer)
 
-          if (prevModel) {
-            prevModel.dispose()
-          }
+          const previewURL =
+            result && result.mime.startsWith('image/')
+              ? URL.createObjectURL(new Blob([buffer], { type: result.mime }))
+              : undefined
 
           const monaco = await import(
             // eslint-disable-next-line import/no-unresolved
             /* webpackPrefetch: true */ 'monaco-editor'
           )
+          const code = decoder.decode(buffer)
+          const model = monaco.editor.createModel(code, language, uri)
 
-          if (selectedFilename) {
-            const model = monaco.editor.createModel(
-              decoder.decode(code),
-              chooseLanguage(selectedFilename),
-              monaco.Uri.file(selectedFilename)
-            )
-
-            editor.setModel(model)
-          }
-
+          setPreviewURL(previewURL)
+          editor.setModel(model)
+          editor.updateOptions({ readOnly: !!previewURL })
           editor.focus()
-
-          setCode(code)
         })
         .catch(error => {
           setError(error.message)
         })
     }
   }, [zip, editor, selectedFilename])
-
-  // generate a preview URL for images
-  useEffect(() => {
-    if (code) {
-      const result = fileType(code)
-
-      const previewURL =
-        result && result.mime.startsWith('image/')
-          ? URL.createObjectURL(new Blob([code], { type: result.mime }))
-          : undefined
-
-      setPreviewURL(previewURL)
-    }
-  }, [code])
 
   // redo the editor layout when the container size changes
   const editorContainerMounted = useCallback(
@@ -286,7 +273,7 @@ export const App: React.FC = () => {
                   className={'button toggle-preview'}
                   onClick={togglePreview}
                 >
-                  {showPreview ? 'Hide Preview' : 'Show Preview'}
+                  {showPreview ? 'Show code' : 'Show preview'}
                 </button>
               )}
             </div>
