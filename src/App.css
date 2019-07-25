@@ -272,6 +272,12 @@
   text-shadow: 0 1px 1px #444;
 }
 
+@media (max-width: 600px) {
+  .filename-form {
+    display: none;
+  }
+}
+
 .filename-input {
   background: none;
   color: inherit;
