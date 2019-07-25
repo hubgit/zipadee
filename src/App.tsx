@@ -109,7 +109,7 @@ export const App: React.FC = () => {
           if (file.name.endsWith('.zip')) {
             setError(error.message)
           } else {
-            setError(`This is not a ZIP file 😖`)
+            setError('This is not a ZIP file')
           }
         })
   }, [file, selectFile])
