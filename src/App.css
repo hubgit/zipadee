@@ -39,6 +39,7 @@
   flex-direction: column;
   background: #444;
   color: white;
+  max-width: min-content;
 }
 
 .files {
@@ -55,7 +56,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 0;
-  max-width: 25vw;
   font-size: 90%;
 }
 
@@ -277,4 +277,9 @@
 .filename-input:focus {
   outline: none;
   border-bottom-color: white;
+}
+
+.gutter {
+  flex-shrink: 0;
+  cursor: col-resize;
 }

@@ -10,6 +10,7 @@ import ResizeObserver from 'resize-observer-polyfill'
 import './App.css'
 import { Files } from './Files'
 import { GitHubLink } from './GitHubLink'
+import Split from 'react-split'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -397,7 +398,7 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      <div className={'main'}>
+      <Split className={'main'} gutterSize={4}>
         <div className={'sidebar'}>
           {files && (
             <Files
@@ -438,7 +439,7 @@ export const App: React.FC = () => {
             ref={editorRef}
           />
         </div>
-      </div>
+      </Split>
     </nav>
   )
 }
