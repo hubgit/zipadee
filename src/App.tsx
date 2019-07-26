@@ -243,7 +243,7 @@ export const App: React.FC = () => {
   }, [])
 
   return (
-    <nav
+    <div
       className={classnames({
         container: true,
         fullscreen: !file,
@@ -271,17 +271,20 @@ export const App: React.FC = () => {
       )}
 
       <Split className={'main'} gutterSize={4}>
-        {(!narrow || showFiles) && (
-          <div className={'sidebar'}>
-            {files && (
-              <Files
-                files={files}
-                selectedFilename={selectedFilename}
-                selectFile={selectFile}
-              />
-            )}
-          </div>
-        )}
+        <div
+          className={'sidebar'}
+          style={{
+            width: narrow && showFiles ? '100%' : undefined,
+          }}
+        >
+          {files && (showFiles || !narrow) && (
+            <Files
+              files={files}
+              selectedFilename={selectedFilename}
+              selectFile={selectFile}
+            />
+          )}
+        </div>
 
         <div
           className={classnames({
@@ -294,7 +297,7 @@ export const App: React.FC = () => {
 
           {selectedFilename && (
             <div className={'filename'}>
-              <div className={'filename-section'}>
+              <div className={'filename-section filename-section-filename'}>
                 {narrow && (
                   <button
                     className={'button toggle-files'}
@@ -314,7 +317,7 @@ export const App: React.FC = () => {
                 </span>
               </div>
 
-              <div className={'filename-section'}>
+              <div className={'filename-section filename-section-actions'}>
                 {previewURL && (
                   <button
                     className={'button toggle-preview'}
@@ -346,6 +349,6 @@ export const App: React.FC = () => {
           />
         </div>
       </Split>
-    </nav>
+    </div>
   )
 }

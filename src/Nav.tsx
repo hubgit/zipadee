@@ -106,7 +106,7 @@ export const Nav: React.FC<{
 
     return (
       <nav className={'header'}>
-        <div className={'header-section'}>
+        <div className={'header-section header-section-file'}>
           <button
             onClick={handleReset}
             className={'reset'}
@@ -135,7 +135,7 @@ export const Nav: React.FC<{
         </div>
 
         {filename && (
-          <div className={'header-section'}>
+          <div className={'header-section header-section-buttons'}>
             {changed && (
               <div
                 className={'button download'}
