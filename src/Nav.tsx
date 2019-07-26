@@ -1,6 +1,7 @@
 import JSZip from 'jszip'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { GitHubLink } from './GitHubLink'
+import { ServiceWorker } from './ServiceWorker'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{
@@ -145,6 +146,8 @@ export const Nav: React.FC<{
                 Save updated file
               </div>
             )}
+
+            {process.env.NODE_ENV === 'production' && <ServiceWorker />}
 
             {installPrompt && (
               <button className={'button install'} onClick={showInstallPrompt}>

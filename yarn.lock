@@ -887,6 +887,11 @@
     "@types/uglify-js" "*"
     source-map "^0.6.0"
 
+"@types/workbox-window@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.npmjs.org/@types/workbox-window/-/workbox-window-4.3.1.tgz#d7b3b1467e4a62706cd1e8e2da52990f597ec7e0"
+  integrity sha512-6xHJhIkDTrnAWbNR5Td6X7/WQje/MLvv0jMAtHPU508hepcX8NdiXOCsyYBhomcVOTyX19B6/xa+br+UfTFE2g==
+
 "@typescript-eslint/eslint-plugin@^1.13.0":
   version "1.13.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-1.13.0.tgz#22fed9b16ddfeb402fd7bcde56307820f6ebc49f"

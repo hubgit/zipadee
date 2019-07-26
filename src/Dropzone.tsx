@@ -37,7 +37,7 @@ export const Dropzone: React.FC<{
         'Drop a ZIP file here…'
       ) : (
         <div className={'intro'}>
-          <div>View or edit the contents of a ZIP file</div>
+          <div>Explore the contents of a ZIP file</div>
           <div className={'extensions'}>
             (including EPUB, DOCX, XLSX, PPTX, ODT)
           </div>

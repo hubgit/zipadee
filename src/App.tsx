@@ -22,6 +22,8 @@ const chooseLanguage = (filename: string) => {
 
 const decoder = new TextDecoder('utf-8')
 
+const narrowQuery = window.matchMedia('screen and (max-width: 600px)')
+
 export const App: React.FC = () => {
   const [changed, setChanged] = useState(false)
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
@@ -34,6 +36,8 @@ export const App: React.FC = () => {
   const [selectedFilename, setSelectedFilename] = useState<string>()
   const [showPreview, setShowPreview] = useState(true)
   const [zip, setZip] = useState<JSZip>()
+  const [narrow, setNarrow] = useState(narrowQuery.matches)
+  const [showFiles, setShowFiles] = useState(false)
 
   // reset
   const handleReset = useCallback(() => {
@@ -79,6 +83,7 @@ export const App: React.FC = () => {
   // select a file
   const selectFile = useCallback((selectedFilename: string) => {
     setSelectedFilename(selectedFilename)
+    setShowFiles(false)
   }, [])
 
   // read file list from the zip
@@ -217,11 +222,32 @@ export const App: React.FC = () => {
     setShowPreview(value => !value)
   }, [])
 
+  // toggle the files sidebar
+  const toggleFiles = useCallback(() => {
+    setShowFiles(value => !value)
+  }, [])
+
+  // observe narrow window
+  // NOTE: Safari doesn't support MediaQueryList.addEventListener yet,
+  // so still using deprecated addListener
+  useEffect(() => {
+    const handleChange = (event: MediaQueryListEvent) => {
+      setNarrow(event.matches)
+    }
+
+    narrowQuery.addListener(handleChange)
+
+    return () => {
+      narrowQuery.removeListener(handleChange)
+    }
+  }, [])
+
   return (
     <nav
       className={classnames({
         container: true,
         fullscreen: !file,
+        narrow: narrow,
       })}
     >
       <Nav
@@ -245,37 +271,59 @@ export const App: React.FC = () => {
       )}
 
       <Split className={'main'} gutterSize={4}>
-        <div className={'sidebar'}>
-          {files && (
-            <Files
-              files={files}
-              selectedFilename={selectedFilename}
-              selectFile={selectFile}
-            />
-          )}
-        </div>
+        {(!narrow || showFiles) && (
+          <div className={'sidebar'}>
+            {files && (
+              <Files
+                files={files}
+                selectedFilename={selectedFilename}
+                selectFile={selectFile}
+              />
+            )}
+          </div>
+        )}
 
-        <div className={'editor'} ref={editorContainerMounted}>
+        <div
+          className={classnames({
+            editor: true,
+            hidden: narrow && showFiles,
+          })}
+          ref={editorContainerMounted}
+        >
           {error && <div className={'error message'}>{error}</div>}
 
           {selectedFilename && (
             <div className={'filename'}>
-              <span
-                onClick={downloadSelectedFile}
-                aria-label={'Download this file'}
-                data-balloon-pos={'right'}
-              >
-                {selectedFilename}
-              </span>
+              <div className={'filename-section'}>
+                {narrow && (
+                  <button
+                    className={'button toggle-files'}
+                    onClick={toggleFiles}
+                  >
+                    ☰
+                  </button>
+                )}
 
-              {previewURL && (
-                <button
-                  className={'button toggle-preview'}
-                  onClick={togglePreview}
+                <span
+                  onClick={downloadSelectedFile}
+                  aria-label={'Download this file'}
+                  data-balloon-pos={'right'}
+                  className={'selected-filename'}
                 >
-                  {showPreview ? 'Show code' : 'Show preview'}
-                </button>
-              )}
+                  {selectedFilename}
+                </span>
+              </div>
+
+              <div className={'filename-section'}>
+                {previewURL && (
+                  <button
+                    className={'button toggle-preview'}
+                    onClick={togglePreview}
+                  >
+                    {showPreview ? 'Show code' : 'Show preview'}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 

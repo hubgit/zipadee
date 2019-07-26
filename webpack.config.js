@@ -33,7 +33,7 @@ module.exports = {
       { from: 'public/manifest.json' },
       { from: 'public/zip-192.png' },
       { from: 'public/zip-512.png' },
-      { from: 'public/zip-512.png', to: 'public/apple-touch-icon.png' },
+      { from: 'public/apple-touch-icon.png' },
     ]),
     new HtmlWebpackPlugin({
       favicon: 'public/favicon.ico',
@@ -46,8 +46,6 @@ module.exports = {
     }),
     new WorkboxWebpackPlugin.GenerateSW({
       swDest: 'service-worker.js',
-      clientsClaim: true,
-      skipWaiting: true,
     }),
   ],
   devServer: {

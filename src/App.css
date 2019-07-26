@@ -108,7 +108,7 @@
   flex: 1;
 }
 
-.monaco.hidden {
+.hidden {
   display: none;
 }
 
@@ -123,6 +123,24 @@
   flex-shrink: 0;
   line-height: 1;
   min-height: 32px;
+}
+
+.narrow .filename {
+  padding: 4px;
+}
+
+.filename-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.selected-filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .reset {
@@ -174,6 +192,10 @@
   text-decoration: none;
   color: inherit;
   margin: 0 16px;
+}
+
+.narrow .github-link {
+  display: none;
 }
 
 .button {
@@ -230,6 +252,11 @@
   font-size: 90%;
 }
 
+.toggle-files {
+  padding: 2px 8px;
+  background: none;
+}
+
 .intro {
   display: flex;
   flex-direction: column;
@@ -249,6 +276,7 @@
 .choose {
   font-size: 22px;
   border: 1px solid #bdd4ff;
+  border-radius: 4px;
 }
 
 .preview {
