@@ -183,6 +183,12 @@
   padding: 8px 0;
 }
 
+.fullscreen .waiting,
+.fullscreen .install,
+.fullscreen .github-link {
+  display: none;
+}
+
 .header-section {
   display: flex;
   align-items: center;
@@ -282,6 +288,7 @@
   align-items: center;
   text-shadow: 0 1px 1px #444;
   line-height: 1;
+  padding: 32px;
 }
 
 .intro .button {

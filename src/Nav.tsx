@@ -134,30 +134,30 @@ export const Nav: React.FC<{
           )}
         </div>
 
-        {filename && (
-          <div className={'header-section header-section-buttons'}>
-            {changed && (
-              <div
-                className={'button download'}
-                onClick={downloadZip}
-                aria-label={`Download ${filename}`}
-                data-balloon-pos={'left'}
-              >
-                Save updated file
-              </div>
-            )}
+        <div className={'header-section header-section-buttons'}>
+          {changed && filename && (
+            <div
+              className={'button download'}
+              onClick={downloadZip}
+              aria-label={`Download ${filename}`}
+              data-balloon-pos={'left'}
+            >
+              Save updated file
+            </div>
+          )}
 
-            {process.env.NODE_ENV === 'production' && <ServiceWorker />}
+          {process.env.NODE_ENV === 'production' && (
+            <ServiceWorker file={file} />
+          )}
 
-            {installPrompt && (
-              <button className={'button install'} onClick={showInstallPrompt}>
-                Install
-              </button>
-            )}
+          {installPrompt && (
+            <button className={'button install'} onClick={showInstallPrompt}>
+              Install
+            </button>
+          )}
 
-            <GitHubLink repo={'hubgit/zipadee'} />
-          </div>
-        )}
+          <GitHubLink repo={'hubgit/zipadee'} />
+        </div>
       </nav>
     )
   }
