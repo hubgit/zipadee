@@ -192,12 +192,12 @@
 .header-section {
   display: flex;
   align-items: center;
-  overflow: hidden;
 }
 
 .header-section-file {
   flex: 1;
   justify-content: flex-start;
+  overflow: hidden;
 }
 
 .header-section-buttons {
@@ -215,10 +215,6 @@
   text-decoration: none;
   color: inherit;
   margin: 0 16px;
-}
-
-.narrow .github-link {
-  display: none;
 }
 
 .button {
