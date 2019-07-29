@@ -18,7 +18,6 @@ export const ServiceWorker: React.FC<{ file?: File }> = React.memo(
       workbox
         .register()
         .then(registration => {
-          console.log('Registered ServiceWorker')
           setRegistration(registration)
         })
         .catch(error => {
@@ -28,7 +27,6 @@ export const ServiceWorker: React.FC<{ file?: File }> = React.memo(
 
     useEffect(() => {
       if (file && registration) {
-        console.log('Checking for ServiceWorker update')
         registration.update().catch(error => {
           console.error(error)
         })
