@@ -2,6 +2,7 @@
   "name": "zipadee",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "repository": "hubgit/zipadee",
   "scripts": {
     "now-dev": "webpack-dev-server --port $PORT",
