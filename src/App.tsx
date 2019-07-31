@@ -10,6 +10,7 @@ import './App.css'
 import { Dropzone } from './Dropzone'
 import { Files } from './Files'
 import Split from 'react-split'
+import { GitHubCorner } from './GitHubCorner'
 import { Nav } from './Nav'
 
 const chooseLanguage = (filename: string) => {
@@ -269,6 +270,8 @@ export const App: React.FC = () => {
           setFilename={setFilename}
         />
       )}
+
+      {!file && <GitHubCorner repo={'hubgit/zipadee'} />}
 
       <Split className={'main'} gutterSize={4}>
         <div

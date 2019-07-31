@@ -151,13 +151,7 @@
   text-overflow: ellipsis;
 }
 
-.reset {
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.reset {
+.button.reset {
   border: none;
   background: none;
   cursor: pointer;
@@ -165,6 +159,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-transform: none;
 }
 
 .reset:focus {
@@ -175,18 +170,7 @@
   width: 32px;
   height: 32px;
   transition: width 0.25s, height 0.25s;
-}
-
-.fullscreen .logo {
-  width: 64px;
-  height: 64px;
-  padding: 8px 0;
-}
-
-.fullscreen .waiting,
-.fullscreen .install,
-.fullscreen .github-link {
-  display: none;
+  margin: 8px;
 }
 
 .header-section {
@@ -206,15 +190,6 @@
 
 .fullscreen .header {
   border-bottom: none;
-}
-
-.github-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: inherit;
-  margin: 0 16px;
 }
 
 .button {
@@ -347,7 +322,52 @@
   background: #4795ff;
 }
 
+.github-corner {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10000;
+}
+
+.github-corner .github-icon {
+  fill: #273e7c77;
+  color: #fff;
+}
+
+.github-corner:hover .github-icon {
+  fill: #273e7c;
+}
+
+.github-corner .octo-arm {
+  transform-origin:130px 106px
+}
+
+.github-corner .octo-arm {
+  transform-origin:130px 106px
+}
+
+.github-link {
+  text-decoration: none;
+  color: inherit;
+}
+
 .narrow [data-balloon-pos]::before,
 .narrow [data-balloon-pos]::after {
+  display: none;
+}
+
+.fullscreen .logo {
+  width: 64px;
+  height: 64px;
+  padding: 8px 0;
+}
+
+.fullscreen .waiting,
+.fullscreen .install {
+  display: none;
+}
+
+.narrow .github-corner {
   display: none;
 }
