@@ -10,7 +10,6 @@ import './App.css'
 import { Dropzone } from './Dropzone'
 import { Files } from './Files'
 import Split from 'react-split'
-import { GitHubCorner } from './GitHubCorner'
 import { Nav } from './Nav'
 
 const chooseLanguage = (filename: string) => {
@@ -262,96 +261,96 @@ export const App: React.FC = () => {
         zip={zip}
       />
 
-      {!file && (
-        <Dropzone
-          editor={editor}
-          setError={setError}
-          setFile={setFile}
-          setFilename={setFilename}
-        />
-      )}
+      <div className={'main'}>
+        {!file && (
+          <Dropzone
+            editor={editor}
+            setError={setError}
+            setFile={setFile}
+            setFilename={setFilename}
+          />
+        )}
 
-      {!file && <GitHubCorner repo={'hubgit/zipadee'} />}
-
-      <Split className={'main'} gutterSize={4}>
-        <div
-          className={'sidebar'}
-          style={{
-            width: narrow && showFiles ? '100%' : undefined,
-          }}
-        >
-          {files && (showFiles || !narrow) && (
-            <Files
-              files={files}
-              selectedFilename={selectedFilename}
-              selectFile={selectFile}
-            />
-          )}
-        </div>
-
-        <div
-          className={classnames({
-            editor: true,
-            hidden: narrow && showFiles,
-          })}
-          ref={editorContainerMounted}
-        >
-          {error && <div className={'error message'}>{error}</div>}
-
-          {selectedFilename && (
-            <div className={'filename'}>
-              <div className={'filename-section filename-section-filename'}>
-                {narrow && (
-                  <button
-                    className={'button toggle-files'}
-                    onClick={toggleFiles}
-                  >
-                    ☰
-                  </button>
-                )}
-
-                <span
-                  onClick={downloadSelectedFile}
-                  aria-label={'Download this file'}
-                  data-balloon-pos={'right'}
-                  className={'selected-filename'}
-                >
-                  {selectedFilename}
-                </span>
-              </div>
-
-              <div className={'filename-section filename-section-actions'}>
-                {previewURL && (
-                  <button
-                    className={'button toggle-preview'}
-                    onClick={togglePreview}
-                  >
-                    {showPreview ? 'Show code' : 'Show preview'}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {previewURL && showPreview && (
-            <div className={'preview'}>
-              <img
-                src={previewURL}
-                className={'preview-image'}
-                alt={'image preview'}
+        <Split className={'split'} gutterSize={4}>
+          <div
+            className={'sidebar'}
+            style={{
+              width: narrow && showFiles ? '100%' : undefined,
+            }}
+          >
+            {files && (showFiles || !narrow) && (
+              <Files
+                files={files}
+                selectedFilename={selectedFilename}
+                selectFile={selectFile}
               />
-            </div>
-          )}
+            )}
+          </div>
 
           <div
             className={classnames({
-              monaco: true,
-              hidden: previewURL && showPreview,
+              editor: true,
+              hidden: narrow && showFiles,
             })}
-            ref={editorRef}
-          />
-        </div>
-      </Split>
+            ref={editorContainerMounted}
+          >
+            {error && <div className={'error message'}>{error}</div>}
+
+            {selectedFilename && (
+              <div className={'filename'}>
+                <div className={'filename-section filename-section-filename'}>
+                  {narrow && (
+                    <button
+                      className={'button toggle-files'}
+                      onClick={toggleFiles}
+                    >
+                      ☰
+                    </button>
+                  )}
+
+                  <span
+                    onClick={downloadSelectedFile}
+                    aria-label={'Download this file'}
+                    data-balloon-pos={'right'}
+                    className={'selected-filename'}
+                  >
+                    {selectedFilename}
+                  </span>
+                </div>
+
+                <div className={'filename-section filename-section-actions'}>
+                  {previewURL && (
+                    <button
+                      className={'button toggle-preview'}
+                      onClick={togglePreview}
+                    >
+                      {showPreview ? 'Show code' : 'Show preview'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {previewURL && showPreview && (
+              <div className={'preview'}>
+                <img
+                  src={previewURL}
+                  className={'preview-image'}
+                  alt={'image preview'}
+                />
+              </div>
+            )}
+
+            <div
+              className={classnames({
+                monaco: true,
+                hidden: previewURL && showPreview,
+              })}
+              ref={editorRef}
+            />
+          </div>
+        </Split>
+      </div>
     </div>
   )
 }

@@ -41,7 +41,11 @@ export const Dropzone: React.FC<{
           <div className={'extensions'}>
             (including EPUB, DOCX, XLSX, PPTX, ODT)
           </div>
-          <button className={'button choose'}>Choose a file</button>
+          <div className={'choose'}>
+            Drop a file here
+            <br />
+            or click to choose
+          </div>
         </div>
       )}
     </div>

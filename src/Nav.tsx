@@ -1,6 +1,6 @@
 import JSZip from 'jszip'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { GitHubCorner } from './GitHubCorner'
+import { InfoLink } from './InfoLink'
 import { ServiceWorker } from './ServiceWorker'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -105,9 +105,11 @@ export const Nav: React.FC<{
     )
 
     return (
-      <nav className={'header'}>
-        <div className={'header-section header-section-file'}>
+      <nav className={'nav'}>
+        <div className={'nav-group header-section-file'}>
           <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
+
+          {!file && <span className={'brand'}>Zipadee</span>}
 
           {filename && (
             <form
@@ -127,7 +129,7 @@ export const Nav: React.FC<{
           )}
         </div>
 
-        <div className={'header-section header-section-buttons'}>
+        <div className={'nav-group header-section-buttons'}>
           {changed && filename && (
             <div
               className={'button download'}
@@ -158,6 +160,13 @@ export const Nav: React.FC<{
             >
               ✕
             </button>
+          )}
+
+          {!file && (
+            <InfoLink
+              href={'https://github.com/hubgit/zipadee'}
+              title={'View source on GitHub'}
+            />
           )}
         </div>
       </nav>

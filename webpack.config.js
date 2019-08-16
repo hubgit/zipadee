@@ -1,5 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
@@ -29,7 +29,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new CopyPlugin([
+    new CopyWebpackPlugin([
       { from: 'public/manifest.json' },
       { from: 'public/zip-192.png' },
       { from: 'public/zip-512.png' },
@@ -37,7 +37,7 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       favicon: 'public/favicon.ico',
-      template: 'public/index.ejs',
+      template: 'public/index.html',
       title: 'Zipadee',
       ga: 'UA-143268750-2',
     }),
