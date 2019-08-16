@@ -112,6 +112,10 @@ a {
   outline: none;
 }
 
+.info-link {
+  margin-left: 8px;
+}
+
 .info-icon {
   height: 32px;
   width: 32px;
@@ -367,8 +371,14 @@ a {
   display: none;
 }
 
-.fullscreen .waiting,
-.fullscreen .install,
+.waiting {
+  display: none;
+}
+
+.fullscreen .waiting {
+  display: flex;
+}
+
 .fullscreen .split {
   display: none;
 }
