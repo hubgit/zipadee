@@ -42,9 +42,9 @@ export const Dropzone: React.FC<{
             (including EPUB, DOCX, XLSX, PPTX, ODT)
           </div>
           <div className={'choose'}>
-            Drop a file here
+            Drag a ZIP
             <br />
-            or click to choose
+            or click to select a file
           </div>
         </div>
       )}
