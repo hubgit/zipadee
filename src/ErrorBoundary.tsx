@@ -1,15 +1,9 @@
 import React from 'react'
 
-export class ErrorBoundary extends React.Component<
-  {},
-  {
+export class ErrorBoundary extends React.Component {
+  public readonly state: {
     error?: string
-  }
-> {
-  public constructor(props: {}) {
-    super(props)
-    this.state = {}
-  }
+  } = {}
 
   public static getDerivedStateFromError(error: Error) {
     return { error: error.message }

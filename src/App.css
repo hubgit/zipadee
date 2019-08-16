@@ -36,6 +36,7 @@ a {
   padding: 8px 16px;
   z-index: 2;
   border-bottom: 1px solid #2c61a9;
+  min-height: 52px;
 }
 
 
@@ -336,7 +337,7 @@ a {
 }
 
 .filename-form {
-  padding: 8px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   text-shadow: 0 1px 1px #444;

@@ -235,9 +235,11 @@ export const App: React.FC = () => {
       setNarrow(event.matches)
     }
 
+    // noinspection JSDeprecatedSymbols
     narrowQuery.addListener(handleChange)
 
     return () => {
+      // noinspection JSDeprecatedSymbols
       narrowQuery.removeListener(handleChange)
     }
   }, [])
