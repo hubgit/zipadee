@@ -174,16 +174,16 @@ a {
   justify-content: center;
   align-items: center;
   text-align: center;
-  border: 2px solid #000;
+  border: 3px solid #000;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: box-shadow 0.25s;
   font-size: 200%;
-  box-shadow: 5px 5px 0 rgba(0,0,0,0.5);
+  box-shadow: 8px 8px 0 #00000077;
   min-height: 300px;
 }
 
 .dropzone:hover {
-  box-shadow: 5px 5px 0 rgba(0,0,0,1.0);
+  box-shadow: 8px 8px 0 #000000;
 }
 
 .dropzone:focus {
