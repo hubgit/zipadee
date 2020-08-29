@@ -16,6 +16,10 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.ttf$/,
+        use: ['file-loader'],
+      },
     ],
   },
   output: {
@@ -29,12 +33,14 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([
-      { from: 'public/manifest.json' },
-      { from: 'public/zip-192.png' },
-      { from: 'public/zip-512.png' },
-      { from: 'public/apple-touch-icon.png' },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public/manifest.json' },
+        { from: 'public/zip-192.png' },
+        { from: 'public/zip-512.png' },
+        { from: 'public/apple-touch-icon.png' },
+      ],
+    }),
     new HtmlWebpackPlugin({
       favicon: 'public/favicon.ico',
       template: 'public/index.html',

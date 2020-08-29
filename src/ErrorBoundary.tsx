@@ -5,11 +5,11 @@ export class ErrorBoundary extends React.Component {
     error?: string
   } = {}
 
-  public static getDerivedStateFromError(error: Error) {
+  public static getDerivedStateFromError(error: Error): { error: string } {
     return { error: error.message }
   }
 
-  public render() {
+  public render(): React.ReactNode {
     if (this.state.error) {
       return <div className={'error message'}>{this.state.error}</div>
     }

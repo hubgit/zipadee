@@ -10,7 +10,7 @@ export const Dropzone: React.FC<{
 }> = React.memo(({ editor, setError, setFile, setFilename }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
-    onDrop: acceptedFiles => {
+    onDrop: (acceptedFiles) => {
       if (editor) {
         const prevModel = editor.getModel()
 

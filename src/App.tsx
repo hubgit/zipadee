@@ -1,7 +1,7 @@
 import 'balloon-css'
 import classnames from 'classnames'
 import { saveAs } from 'file-saver'
-import fileType from 'file-type'
+import FileType from 'file-type/browser'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -55,7 +55,7 @@ export const App: React.FC = () => {
   const editorRef = useCallback((node: HTMLDivElement | null) => {
     if (node) {
       import(/* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json')
-        .then(async theme => {
+        .then(async (theme) => {
           const monaco = await import(
             // eslint-disable-next-line import/no-unresolved
             /* webpackPrefetch: true */ 'monaco-editor'
@@ -74,7 +74,7 @@ export const App: React.FC = () => {
 
           setEditor(editor)
         })
-        .catch(error => {
+        .catch((error) => {
           setError(error.message)
         })
     }
@@ -90,8 +90,8 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (file)
       import(/* webpackPrefetch: true */ 'jszip')
-        .then(JSZip => JSZip.loadAsync(file))
-        .then(zip => {
+        .then((JSZip) => JSZip.loadAsync(file))
+        .then((zip) => {
           setZip(zip)
 
           const files: string[] = []
@@ -110,7 +110,7 @@ export const App: React.FC = () => {
             selectFile(files[0])
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (file.name.endsWith('.zip')) {
             setError(error.message)
           } else {
@@ -131,11 +131,10 @@ export const App: React.FC = () => {
         prevModel.dispose()
       }
 
-      zip
-        .file(selectedFilename)
+      zip.files[selectedFilename]
         .async('arraybuffer')
-        .then(async buffer => {
-          const result = fileType(buffer)
+        .then(async (buffer) => {
+          const result = await FileType.fromBuffer(buffer)
 
           const previewURL =
             result && result.mime.startsWith('image/')
@@ -154,7 +153,7 @@ export const App: React.FC = () => {
           editor.updateOptions({ readOnly: !!previewURL })
           editor.focus()
         })
-        .catch(error => {
+        .catch((error) => {
           setError(error.message)
         })
     }
@@ -162,9 +161,9 @@ export const App: React.FC = () => {
 
   // redo the editor layout when the container size changes
   const editorContainerMounted = useCallback(
-    node => {
+    (node) => {
       if (node && editor && !observer) {
-        const observer = new ResizeObserver(entries => {
+        const observer = new ResizeObserver((entries) => {
           for (const entry of entries) {
             if (node.isSameNode(entry.target)) {
               const {
@@ -187,13 +186,12 @@ export const App: React.FC = () => {
   // download an individual file
   const downloadSelectedFile = useCallback(() => {
     if (zip && selectedFilename) {
-      zip
-        .file(selectedFilename)
+      zip.files[selectedFilename]
         .async('blob')
-        .then(blob => {
+        .then((blob) => {
           saveAs(blob, selectedFilename)
         })
-        .catch(error => {
+        .catch((error) => {
           setError(error.message)
         })
     }
@@ -219,12 +217,12 @@ export const App: React.FC = () => {
 
   // toggle the image preview
   const togglePreview = useCallback(() => {
-    setShowPreview(value => !value)
+    setShowPreview((value) => !value)
   }, [])
 
   // toggle the files sidebar
   const toggleFiles = useCallback(() => {
-    setShowFiles(value => !value)
+    setShowFiles((value) => !value)
   }, [])
 
   // observe narrow window

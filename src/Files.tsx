@@ -8,7 +8,7 @@ export const Files: React.FC<{
 }> = React.memo(({ files, selectedFilename, selectFile }) => {
   return (
     <div className={'files'}>
-      {files.map(file => (
+      {files.map((file) => (
         <div
           className={classnames({
             file: true,

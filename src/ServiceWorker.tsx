@@ -17,17 +17,17 @@ export const ServiceWorker: React.FC<{ file?: File }> = React.memo(
 
       workbox
         .register()
-        .then(registration => {
+        .then((registration) => {
           setRegistration(registration)
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error)
         })
     }, [])
 
     useEffect(() => {
       if (file && registration) {
-        registration.update().catch(error => {
+        registration.update().catch((error) => {
           console.error(error)
         })
       }
@@ -39,7 +39,7 @@ export const ServiceWorker: React.FC<{ file?: File }> = React.memo(
           window.location.reload()
         })
 
-        workbox.messageSW({ type: 'SKIP_WAITING' }).catch(error => {
+        workbox.messageSW({ type: 'SKIP_WAITING' }).catch((error) => {
           console.error(error)
         })
       }

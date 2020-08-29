@@ -43,11 +43,11 @@ export const Nav: React.FC<{
           .generateAsync({
             type: 'blob',
           })
-          .then(blob => {
+          .then((blob) => {
             saveAs(blob, filename)
             setChanged(false)
           })
-          .catch(error => {
+          .catch((error) => {
             setError(error.message)
           })
       }
@@ -72,10 +72,10 @@ export const Nav: React.FC<{
         installPrompt.prompt()
 
         installPrompt.userChoice
-          .then(choiceResult => {
+          .then((choiceResult) => {
             console.log(`Install ${choiceResult}`)
           })
-          .catch(error => {
+          .catch((error) => {
             setError(error.message)
           })
       }
@@ -85,7 +85,7 @@ export const Nav: React.FC<{
 
     // handle edits to the file name
     const handleFilenameChange = useCallback(
-      event => {
+      (event) => {
         setFilename(event.target.value)
         setChanged(true)
       },
