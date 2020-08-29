@@ -1,6 +1,13 @@
 {
   "version": 2,
-  "alias": ["zipadee.now.sh"],
+  "name": "zipadee",
+  "alias": "zipadee",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/static-build"
+    }
+  ],
   "routes": [
     {
       "src": "/workers/(.*)",
