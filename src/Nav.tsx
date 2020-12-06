@@ -1,4 +1,4 @@
-import { fileOpen, fileSave, FileSystemHandle } from 'browser-nativefs'
+import { fileSave } from 'browser-nativefs'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor'
 // import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -46,30 +46,46 @@ export const Nav: React.FC<{
 
     // download the updated zip
     const downloadZip = useCallback(async () => {
-      if (zip && file) {
+      if (zip && file && filename) {
         try {
           const blob = await zip.generateAsync({
             type: 'blob',
+            mimeType: 'application/zip',
           })
 
+          const newFile = new File([blob], filename)
+
           try {
-            await fileSave(
-              blob,
-              {
+            if (file.name === filename) {
+              // save
+              newFile.handle = await fileSave(
+                blob,
+                {},
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                file.handle
+              )
+            } else {
+              const extensions = ['.zip']
+              const extension = filename.split('.').pop()
+              if (extension) {
+                extensions.unshift(`.${extension}`)
+              }
+
+              // save as
+              newFile.handle = await fileSave(blob, {
                 fileName: filename,
-                extensions: ['.zip'], // TODO: add extension
-              },
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              file.name === filename ? file.handle : undefined
-            )
+                extensions,
+              })
+            }
           } catch (error) {
-            await fileSave(blob, {
+            newFile.handle = await fileSave(blob, {
               fileName: filename,
               extensions: ['.zip'],
             })
           }
 
+          setFile(newFile)
           setChanged(false)
         } catch (error) {
           setError(error.message)
@@ -128,17 +144,6 @@ export const Nav: React.FC<{
       [filenameRef]
     )
 
-    const handleOpen = useCallback(() => {
-      fileOpen()
-        .then(async (file) => {
-          setFile(file)
-          setFilename(file.name)
-        })
-        .catch((error) => {
-          setError(error)
-        })
-    }, [setError, setFile, setFilename])
-
     return (
       <nav className={'nav'}>
         <div className={'nav-group header-section-file'}>
@@ -194,17 +199,6 @@ export const Nav: React.FC<{
               data-balloon-pos={'left'}
             >
               ✕
-            </button>
-          )}
-
-          {!file && (
-            <button
-              className={'button'}
-              onClick={handleOpen}
-              aria-label={'Open a ZIP file'}
-              data-balloon-pos={'left'}
-            >
-              Open File
             </button>
           )}
 

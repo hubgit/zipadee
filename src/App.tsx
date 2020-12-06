@@ -1,6 +1,6 @@
 import 'balloon-css'
 import classnames from 'classnames'
-import { fileSave } from 'browser-nativefs'
+import { fileOpen, fileSave } from 'browser-nativefs'
 import imageType from 'image-type'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -10,6 +10,7 @@ import './App.css'
 import { Files } from './Files'
 import Split from 'react-split'
 import { Nav } from './Nav'
+import { Info } from './Info'
 
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
@@ -82,7 +83,15 @@ export const App: React.FC = () => {
 
   // read file list from the zip
   useEffect(() => {
-    if (file)
+    if (file) {
+      if (editor) {
+        const prevModel = editor.getModel()
+
+        if (prevModel) {
+          prevModel.dispose()
+        }
+      }
+
       JSZip.loadAsync(file)
         .then((zip) => {
           setZip(zip)
@@ -110,6 +119,7 @@ export const App: React.FC = () => {
             setError('This is not a ZIP file')
           }
         })
+    }
   }, [file, selectFile])
 
   // open the selected file in the editor
@@ -256,6 +266,8 @@ export const App: React.FC = () => {
       />
 
       <div className={'main'}>
+        {!file && <Info setFile={setFile} setFilename={setFilename} />}
+
         <Split className={'split'} gutterSize={4}>
           <div
             className={'sidebar'}
