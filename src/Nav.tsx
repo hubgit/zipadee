@@ -1,4 +1,7 @@
+import { fileOpen, fileSave, FileSystemHandle } from 'browser-nativefs'
 import JSZip from 'jszip'
+import * as monaco from 'monaco-editor'
+// import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { InfoLink } from './InfoLink'
 import { ServiceWorker } from './ServiceWorker'
@@ -14,44 +17,65 @@ interface BeforeInstallPromptEvent extends Event {
 
 export const Nav: React.FC<{
   changed: boolean
+  editor?: monaco.editor.IStandaloneCodeEditor
   file?: File
   filename?: string
   handleReset: () => void
   setChanged: (changed: boolean) => void
   setError: (error: string) => void
+  setFile: (file: File) => void
   setFilename: (filename: string) => void
   zip?: JSZip
 }> = React.memo(
   ({
     changed,
+    // editor,
     file,
     filename,
     handleReset,
     setChanged,
     setError,
+    setFile,
     setFilename,
     zip,
   }) => {
-    const [installPrompt, setInstallPrompt] = useState<
-      BeforeInstallPromptEvent
-    >()
+    const [
+      installPrompt,
+      setInstallPrompt,
+    ] = useState<BeforeInstallPromptEvent>()
 
     // download the updated zip
-    const downloadZip = useCallback(() => {
-      if (zip && filename) {
-        zip
-          .generateAsync({
+    const downloadZip = useCallback(async () => {
+      if (zip && file) {
+        try {
+          const blob = await zip.generateAsync({
             type: 'blob',
           })
-          .then((blob) => {
-            saveAs(blob, filename)
-            setChanged(false)
-          })
-          .catch((error) => {
-            setError(error.message)
-          })
+
+          try {
+            await fileSave(
+              blob,
+              {
+                fileName: filename,
+                extensions: ['.zip'], // TODO: add extension
+              },
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              file.name === filename ? file.handle : undefined
+            )
+          } catch (error) {
+            await fileSave(blob, {
+              fileName: filename,
+              extensions: ['.zip'],
+            })
+          }
+
+          setChanged(false)
+        } catch (error) {
+          setError(error.message)
+        }
       }
-    }, [zip, filename, setChanged, setError])
+    }, [zip, file, filename, setChanged, setError])
 
     // prompt the user to install the app when appropriate
     useEffect(() => {
@@ -67,9 +91,9 @@ export const Nav: React.FC<{
     }, [])
 
     // show the install prompt when the install button is clicked
-    const showInstallPrompt = useCallback(() => {
+    const showInstallPrompt = useCallback(async () => {
       if (installPrompt) {
-        installPrompt.prompt()
+        await installPrompt.prompt()
 
         installPrompt.userChoice
           .then((choiceResult) => {
@@ -104,12 +128,23 @@ export const Nav: React.FC<{
       [filenameRef]
     )
 
+    const handleOpen = useCallback(() => {
+      fileOpen()
+        .then(async (file) => {
+          setFile(file)
+          setFilename(file.name)
+        })
+        .catch((error) => {
+          setError(error)
+        })
+    }, [setError, setFile, setFilename])
+
     return (
       <nav className={'nav'}>
         <div className={'nav-group header-section-file'}>
           <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
 
-          {!file && <span className={'brand'}>Zipadee</span>}
+          {!filename && <span className={'brand'}>Zipadee</span>}
 
           {filename && (
             <form
@@ -159,6 +194,17 @@ export const Nav: React.FC<{
               data-balloon-pos={'left'}
             >
               ✕
+            </button>
+          )}
+
+          {!file && (
+            <button
+              className={'button'}
+              onClick={handleOpen}
+              aria-label={'Open a ZIP file'}
+              data-balloon-pos={'left'}
+            >
+              Open File
             </button>
           )}
 

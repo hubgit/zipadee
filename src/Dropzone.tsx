@@ -20,7 +20,7 @@ export const Dropzone: React.FC<{
       }
 
       if (acceptedFiles.length) {
-        const file = acceptedFiles[0]
+        const [file] = acceptedFiles
         setFile(file)
         setFilename(file.name)
       } else {

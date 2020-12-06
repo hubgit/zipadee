@@ -1,8 +1,11 @@
+const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
+
+const dist = path.resolve(process.cwd(), 'dist')
 
 module.exports = {
   module: {
@@ -24,9 +27,14 @@ module.exports = {
   },
   output: {
     filename: 'js/[name].[contenthash].js',
+    path: dist,
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: {
+      buffer: require.resolve('buffer'),
+      stream: require.resolve('stream-browserify'),
+    },
   },
   performance: {
     hints: false,
@@ -52,9 +60,10 @@ module.exports = {
     }),
     new WorkboxWebpackPlugin.GenerateSW({
       swDest: 'service-worker.js',
+      maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
     }),
   ],
   devServer: {
-    contentBase: './dist',
+    static: [dist],
   },
 }
