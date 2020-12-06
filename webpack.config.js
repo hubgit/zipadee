@@ -10,46 +10,6 @@ const dist = path.resolve(process.cwd(), 'dist')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-const plugins = [
-  new CleanWebpackPlugin(),
-  new CopyWebpackPlugin({
-    patterns: [
-      { from: 'public/manifest.json' },
-      { from: 'public/zip-192.png' },
-      { from: 'public/zip-512.png' },
-      { from: 'public/apple-touch-icon.png' },
-    ],
-  }),
-  new HtmlWebpackPlugin({
-    favicon: 'public/favicon.ico',
-    template: 'public/index.html',
-    title: 'Zipadee',
-    ga: 'UA-143268750-2',
-  }),
-  new MonacoWebpackPlugin({
-    output: 'workers',
-    filename: '[name].worker.[contenthash].js',
-    languages: [
-      'css',
-      'html',
-      'javascript',
-      'json',
-      'markdown',
-      'php',
-      'python',
-      'shell',
-      'typescript',
-      'xml',
-      'yaml',
-    ],
-  }),
-  new ReactRefreshWebpackPlugin(),
-  new WorkboxWebpackPlugin.GenerateSW({
-    swDest: 'service-worker.js',
-    maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
-  }),
-]
-
 module.exports = {
   module: {
     rules: [
@@ -87,7 +47,45 @@ module.exports = {
   performance: {
     hints: false,
   },
-  plugins,
+  plugins: [
+    new CleanWebpackPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public/manifest.json' },
+        { from: 'public/zip-192.png' },
+        { from: 'public/zip-512.png' },
+        { from: 'public/apple-touch-icon.png' },
+      ],
+    }),
+    new HtmlWebpackPlugin({
+      favicon: 'public/favicon.ico',
+      template: 'public/index.html',
+      title: 'Zipadee',
+      ga: 'UA-143268750-2',
+    }),
+    new MonacoWebpackPlugin({
+      output: 'workers',
+      filename: '[name].worker.[contenthash].js',
+      languages: [
+        'css',
+        'html',
+        'javascript',
+        'json',
+        'markdown',
+        'php',
+        'python',
+        'shell',
+        'typescript',
+        'xml',
+        'yaml',
+      ],
+    }),
+    isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
+    new WorkboxWebpackPlugin.GenerateSW({
+      swDest: 'service-worker.js',
+      maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
+    }),
+  ].filter(Boolean),
   devServer: {
     liveReload: false,
     static: [dist],
