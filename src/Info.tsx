@@ -43,12 +43,20 @@ export const Info: React.FC<{
 
           // kind will be 'file' for file/directory entries.
           if (item && item.kind === 'file') {
-            const handle = await item.getAsFileSystemHandle()
+            if (item.getAsFileSystemHandle) {
+              const handle = await item.getAsFileSystemHandle()
 
-            if (handle.kind === 'file') {
-              const file = await handle.getFile()
+              if (handle.kind === 'file') {
+                const file = await handle.getFile()
+                if (file) {
+                  file.handle = handle
+                  setFile(file)
+                  setFilename(file.name)
+                }
+              }
+            } else {
+              const file = await item.getAsFile()
               if (file) {
-                file.handle = handle
                 setFile(file)
                 setFilename(file.name)
               }
