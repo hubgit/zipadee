@@ -1,16 +1,16 @@
 import 'balloon-css'
 import classnames from 'classnames'
-import { saveAs } from 'file-saver'
-import FileType from 'file-type/browser'
+import { fileOpen, fileSave } from 'browser-nativefs'
+import imageType from 'image-type'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useState } from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import './App.css'
-import { Dropzone } from './Dropzone'
 import { Files } from './Files'
 import Split from 'react-split'
 import { Nav } from './Nav'
+import { Info } from './Info'
 
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
@@ -56,11 +56,6 @@ export const App: React.FC = () => {
     if (node) {
       import(/* webpackPrefetch: true */ 'monaco-themes/themes/GitHub.json')
         .then(async (theme) => {
-          const monaco = await import(
-            // eslint-disable-next-line import/no-unresolved
-            /* webpackPrefetch: true */ 'monaco-editor'
-          )
-
           monaco.editor.defineTheme(
             'github',
             theme as monaco.editor.IStandaloneThemeData
@@ -88,9 +83,16 @@ export const App: React.FC = () => {
 
   // read file list from the zip
   useEffect(() => {
-    if (file)
-      import(/* webpackPrefetch: true */ 'jszip')
-        .then((JSZip) => JSZip.loadAsync(file))
+    if (file) {
+      if (editor) {
+        const prevModel = editor.getModel()
+
+        if (prevModel) {
+          prevModel.dispose()
+        }
+      }
+
+      JSZip.loadAsync(file)
         .then((zip) => {
           setZip(zip)
 
@@ -117,6 +119,7 @@ export const App: React.FC = () => {
             setError('This is not a ZIP file')
           }
         })
+    }
   }, [file, selectFile])
 
   // open the selected file in the editor
@@ -131,21 +134,17 @@ export const App: React.FC = () => {
         prevModel.dispose()
       }
 
-      zip.files[selectedFilename]
-        .async('arraybuffer')
-        .then(async (buffer) => {
-          const result = await FileType.fromBuffer(buffer)
+      zip
+        .file(selectedFilename)
+        .async('uint8array')
+        .then(async (uint8array) => {
+          const result = await imageType(uint8array)
 
-          const previewURL =
-            result && result.mime.startsWith('image/')
-              ? URL.createObjectURL(new Blob([buffer], { type: result.mime }))
-              : undefined
+          const previewURL = result
+            ? URL.createObjectURL(new Blob([uint8array], { type: result.mime }))
+            : undefined
 
-          const monaco = await import(
-            // eslint-disable-next-line import/no-unresolved
-            /* webpackPrefetch: true */ 'monaco-editor'
-          )
-          const code = decoder.decode(buffer)
+          const code = decoder.decode(uint8array)
           const model = monaco.editor.createModel(code, language, uri)
 
           setPreviewURL(previewURL)
@@ -189,7 +188,10 @@ export const App: React.FC = () => {
       zip.files[selectedFilename]
         .async('blob')
         .then((blob) => {
-          saveAs(blob, selectedFilename)
+          const basename = selectedFilename.split('/').pop()
+          return fileSave(blob, {
+            fileName: basename,
+          })
         })
         .catch((error) => {
           setError(error.message)
@@ -252,24 +254,19 @@ export const App: React.FC = () => {
     >
       <Nav
         changed={changed}
+        editor={editor}
         file={file}
         filename={filename}
         handleReset={handleReset}
         setChanged={setChanged}
         setError={setError}
+        setFile={setFile}
         setFilename={setFilename}
         zip={zip}
       />
 
       <div className={'main'}>
-        {!file && (
-          <Dropzone
-            editor={editor}
-            setError={setError}
-            setFile={setFile}
-            setFilename={setFilename}
-          />
-        )}
+        {!file && <Info setFile={setFile} setFilename={setFilename} />}
 
         <Split className={'split'} gutterSize={4}>
           <div

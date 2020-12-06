@@ -167,7 +167,7 @@ a {
   background-color: #3168b3;
 }
 
-.dropzone {
+.infobox {
   padding: 32px 64px;
   display: flex;
   flex-direction: column;
@@ -182,11 +182,11 @@ a {
   min-height: 300px;
 }
 
-.dropzone:hover {
+.infobox:hover {
   box-shadow: 8px 8px 0 #000000;
 }
 
-.dropzone:focus {
+.infobox:focus {
   outline: none;
 }
 

@@ -1,4 +1,7 @@
+import { fileSave } from 'browser-nativefs'
 import JSZip from 'jszip'
+import * as monaco from 'monaco-editor'
+// import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { InfoLink } from './InfoLink'
 import { ServiceWorker } from './ServiceWorker'
@@ -14,44 +17,81 @@ interface BeforeInstallPromptEvent extends Event {
 
 export const Nav: React.FC<{
   changed: boolean
+  editor?: monaco.editor.IStandaloneCodeEditor
   file?: File
   filename?: string
   handleReset: () => void
   setChanged: (changed: boolean) => void
   setError: (error: string) => void
+  setFile: (file: File) => void
   setFilename: (filename: string) => void
   zip?: JSZip
 }> = React.memo(
   ({
     changed,
+    // editor,
     file,
     filename,
     handleReset,
     setChanged,
     setError,
+    setFile,
     setFilename,
     zip,
   }) => {
-    const [installPrompt, setInstallPrompt] = useState<
-      BeforeInstallPromptEvent
-    >()
+    const [
+      installPrompt,
+      setInstallPrompt,
+    ] = useState<BeforeInstallPromptEvent>()
 
     // download the updated zip
-    const downloadZip = useCallback(() => {
-      if (zip && filename) {
-        zip
-          .generateAsync({
+    const downloadZip = useCallback(async () => {
+      if (zip && file && filename) {
+        try {
+          const blob = await zip.generateAsync({
             type: 'blob',
+            mimeType: 'application/zip',
           })
-          .then((blob) => {
-            saveAs(blob, filename)
-            setChanged(false)
-          })
-          .catch((error) => {
-            setError(error.message)
-          })
+
+          const newFile = new File([blob], filename)
+
+          try {
+            if (file.name === filename) {
+              // save
+              newFile.handle = await fileSave(
+                blob,
+                {},
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                file.handle
+              )
+            } else {
+              const extensions = ['.zip']
+              const extension = filename.split('.').pop()
+              if (extension) {
+                extensions.unshift(`.${extension}`)
+              }
+
+              // save as
+              newFile.handle = await fileSave(blob, {
+                fileName: filename,
+                extensions,
+              })
+            }
+          } catch (error) {
+            newFile.handle = await fileSave(blob, {
+              fileName: filename,
+              extensions: ['.zip'],
+            })
+          }
+
+          setFile(newFile)
+          setChanged(false)
+        } catch (error) {
+          setError(error.message)
+        }
       }
-    }, [zip, filename, setChanged, setError])
+    }, [zip, file, filename, setChanged, setError])
 
     // prompt the user to install the app when appropriate
     useEffect(() => {
@@ -67,9 +107,9 @@ export const Nav: React.FC<{
     }, [])
 
     // show the install prompt when the install button is clicked
-    const showInstallPrompt = useCallback(() => {
+    const showInstallPrompt = useCallback(async () => {
       if (installPrompt) {
-        installPrompt.prompt()
+        await installPrompt.prompt()
 
         installPrompt.userChoice
           .then((choiceResult) => {
@@ -109,7 +149,7 @@ export const Nav: React.FC<{
         <div className={'nav-group header-section-file'}>
           <img className={'logo'} src={'/favicon.ico'} alt={'Zipadee logo'} />
 
-          {!file && <span className={'brand'}>Zipadee</span>}
+          {!filename && <span className={'brand'}>Zipadee</span>}
 
           {filename && (
             <form
