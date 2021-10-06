@@ -1,4 +1,4 @@
-import { fileOpen } from 'browser-nativefs'
+import { fileOpen } from 'browser-fs-access'
 import React, { useCallback } from 'react'
 
 export const Info: React.FC<{

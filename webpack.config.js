@@ -81,7 +81,7 @@ module.exports = {
       ],
     }),
     isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
-    new WorkboxWebpackPlugin.GenerateSW({
+    isDevelopment ? undefined : new WorkboxWebpackPlugin.GenerateSW({
       swDest: 'service-worker.js',
       maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
     }),

@@ -1,4 +1,4 @@
-import { fileSave } from 'browser-nativefs'
+import { fileSave } from 'browser-fs-access'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor'
 // import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -61,8 +61,6 @@ export const Nav: React.FC<{
               newFile.handle = await fileSave(
                 blob,
                 {},
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 file.handle
               )
             } else {

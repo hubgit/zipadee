@@ -1,6 +1,6 @@
 import 'balloon-css'
 import classnames from 'classnames'
-import { fileOpen, fileSave } from 'browser-nativefs'
+import { fileSave } from 'browser-fs-access'
 import imageType from 'image-type'
 import JSZip from 'jszip'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
@@ -185,12 +185,18 @@ export const App: React.FC = () => {
   // download an individual file
   const downloadSelectedFile = useCallback(() => {
     if (zip && selectedFilename) {
+      setError(undefined)
       zip.files[selectedFilename]
         .async('blob')
         .then((blob) => {
+          const blobToSave = new Blob([blob], {
+            type: 'application/octet-stream', // TODO: detect mime type?
+          })
           const basename = selectedFilename.split('/').pop()
-          return fileSave(blob, {
+          const extension = selectedFilename.split('.').pop() || 'zip'
+          return fileSave(blobToSave, {
             fileName: basename,
+            extensions: ['.' + extension],
           })
         })
         .catch((error) => {
