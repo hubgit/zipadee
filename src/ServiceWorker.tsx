@@ -4,9 +4,8 @@ import { Workbox } from 'workbox-window'
 export const ServiceWorker: React.FC<{ file?: File }> = React.memo(
   ({ file }) => {
     const [workbox, setWorkbox] = useState<Workbox>()
-    const [registration, setRegistration] = useState<
-      ServiceWorkerRegistration
-    >()
+    const [registration, setRegistration] =
+      useState<ServiceWorkerRegistration>()
 
     useEffect(() => {
       const workbox = new Workbox('/service-worker.js')

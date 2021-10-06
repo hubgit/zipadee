@@ -120,7 +120,7 @@ export const App: React.FC = () => {
           }
         })
     }
-  }, [file, selectFile])
+  }, [editor, file, selectFile])
 
   // open the selected file in the editor
   useEffect(() => {

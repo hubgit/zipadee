@@ -39,10 +39,8 @@ export const Nav: React.FC<{
     setFilename,
     zip,
   }) => {
-    const [
-      installPrompt,
-      setInstallPrompt,
-    ] = useState<BeforeInstallPromptEvent>()
+    const [installPrompt, setInstallPrompt] =
+      useState<BeforeInstallPromptEvent>()
 
     // download the updated zip
     const downloadZip = useCallback(async () => {
@@ -58,11 +56,7 @@ export const Nav: React.FC<{
           try {
             if (file.name === filename) {
               // save
-              newFile.handle = await fileSave(
-                blob,
-                {},
-                file.handle
-              )
+              newFile.handle = await fileSave(blob, {}, file.handle)
             } else {
               const extensions = ['.zip']
               const extension = filename.split('.').pop()
@@ -89,7 +83,7 @@ export const Nav: React.FC<{
           setError(error.message)
         }
       }
-    }, [zip, file, filename, setChanged, setError])
+    }, [zip, file, filename, setChanged, setError, setFile])
 
     // prompt the user to install the app when appropriate
     useEffect(() => {
