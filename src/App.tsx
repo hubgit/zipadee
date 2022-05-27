@@ -11,6 +11,7 @@ import { Files } from './Files'
 import Split from 'react-split'
 import { Nav } from './Nav'
 import { Info } from './Info'
+import { LaunchQueue } from './LaunchQueue'
 
 const chooseLanguage = (filename: string) => {
   if (filename.endsWith('-json')) {
@@ -135,7 +136,7 @@ export const App: React.FC = () => {
       }
 
       zip
-        .file(selectedFilename)
+        .file(selectedFilename)!
         .async('uint8array')
         .then(async (uint8array) => {
           const result = await imageType(uint8array)
@@ -272,6 +273,7 @@ export const App: React.FC = () => {
       />
 
       <div className={'main'}>
+        <LaunchQueue setFile={setFile} setFilename={setFilename} />
         {!file && <Info setFile={setFile} setFilename={setFilename} />}
 
         <Split className={'split'} gutterSize={4}>

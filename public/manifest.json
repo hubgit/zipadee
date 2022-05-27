@@ -16,5 +16,13 @@
       "type": "image/png",
       "sizes": "512x512"
     }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/zip": [".zip"]
+      }
+    }
   ]
 }
