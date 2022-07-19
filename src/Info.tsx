@@ -73,7 +73,7 @@ export const Info: React.FC<{
       <div className={'intro'}>
         <div>Edit the contents of a ZIP file</div>
         <div className={'extensions'}>
-          (including EPUB, DOCX, XLSX, PPTX, ODT)
+          (including EPUB, DOCX, XLSX, PPTX, ODT, CRX)
         </div>
         <div className={'choose'}>
           Drag a ZIP
