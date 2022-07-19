@@ -21,7 +21,9 @@
     {
       "action": "/",
       "accept": {
-        "application/zip": [".zip"]
+        "application/zip": [".zip"],
+        "application/x-chrome-extension": [".crx"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
       }
     }
   ]
